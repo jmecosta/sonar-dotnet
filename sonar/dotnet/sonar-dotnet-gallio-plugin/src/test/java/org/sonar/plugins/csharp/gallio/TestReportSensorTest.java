@@ -59,6 +59,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import org.sonar.plugins.csharp.gallio.results.execution.UnitTestResultParser;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(org.sonar.api.resources.File.class)
@@ -69,7 +70,7 @@ public class TestReportSensorTest {
   private VisualStudioProject vsTestProject2;
   private MicrosoftWindowsEnvironment microsoftWindowsEnvironment;
   private Project project;
-  private GallioResultParser parser;
+  private UnitTestResultParser parser;
   private Settings conf;
 
   private File fakeTestSourceFile = TestUtils.getResource("FakeTest.cs");
@@ -97,7 +98,7 @@ public class TestReportSensorTest {
     when(fileSystem.getTestDirs()).thenReturn(Collections.singletonList(TestUtils.getResource(".")));
     when(project.getFileSystem()).thenReturn(fileSystem);
 
-    parser = mock(GallioResultParser.class); // create the parser before the sensor
+    parser = mock(UnitTestResultParser.class); // create the parser before the sensor
 
     conf = new Settings(new PropertyDefinitions(new DotNetCorePlugin(), new GallioPlugin()));
   }

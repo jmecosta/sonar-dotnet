@@ -48,6 +48,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.sonar.plugins.csharp.gallio.results.execution.UnitTestResultParser;
 
 /**
  * Gets the execution test report from Gallio and pushes data from it into sonar.
@@ -57,7 +58,7 @@ public class TestReportSensor extends AbstractRegularDotNetSensor {
 
   private static final Logger LOG = LoggerFactory.getLogger(TestReportSensor.class);
 
-  private GallioResultParser parser;
+  private UnitTestResultParser parser;
 
   /**
    * Constructs a {@link TestReportSensor}.
@@ -67,7 +68,7 @@ public class TestReportSensor extends AbstractRegularDotNetSensor {
    * @param microsoftWindowsEnvironment
    */
   public TestReportSensor(DotNetConfiguration configuration, MicrosoftWindowsEnvironment microsoftWindowsEnvironment,
-      GallioResultParser parser) {
+      UnitTestResultParser parser) {
     super(configuration, microsoftWindowsEnvironment, "Gallio Report Parser", configuration.getString(GallioConstants.MODE));
     this.parser = parser;
   }

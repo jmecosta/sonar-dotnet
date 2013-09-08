@@ -36,6 +36,10 @@ import org.sonar.test.TestUtils;
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.stream.XMLStreamException;
+import junit.framework.Assert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,7 +58,12 @@ public class GallioResultParserTest {
   }
 
   private Collection<UnitTestReport> parse(String fileName) {
-    return parser.parse(TestUtils.getResource("/Results/execution/" + fileName));
+      try {
+          return parser.parse(TestUtils.getResource("/Results/execution/" + fileName));
+      } catch (XMLStreamException ex) {
+          Assert.fail("Parser Exception Not Expected: " + ex.getStackTrace());
+          return null;
+      }
   }
 
   @Test
@@ -79,6 +88,11 @@ public class GallioResultParserTest {
 
   }
 
+  @Test (expected=XMLStreamException.class) 
+  public void testShouldThrowExceptionWhenInvalidFormatReport() throws XMLStreamException {
+    Collection<UnitTestReport> reports = parser.parse(TestUtils.getResource("/Results/execution/nunit-report.xml"));
+  }
+    
   @Test
   public void testReportAndTestCaseDetailsParsing() {
     Collection<UnitTestReport> reports = parse("gallio-report-multiple.xml");
@@ -144,7 +158,7 @@ public class GallioResultParserTest {
   }
 
   @Test
-  public void testMbUnitReportParsing() {
+  public void testMbUnitReportParsing() throws XMLStreamException {
     Collection<UnitTestReport> reports = parse("gallio-report-mbunit-sample.xml");
     int errors = 0;
     int failures = 0;

@@ -26,12 +26,12 @@ import org.sonar.api.PropertyType;
 import org.sonar.api.SonarPlugin;
 import org.sonar.dotnet.tools.gallio.GallioRunnerConstants;
 import org.sonar.plugins.csharp.gallio.results.coverage.CoverageResultParser;
-import org.sonar.plugins.csharp.gallio.results.execution.GallioResultParser;
 import org.sonar.plugins.csharp.gallio.ui.GallioRubyWidget;
 import org.sonar.plugins.dotnet.api.sensor.AbstractDotNetSensor;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.sonar.plugins.csharp.gallio.results.execution.UnitTestResultParser;
 
 /**
  * C# Gallio plugin class.
@@ -120,7 +120,7 @@ public class GallioPlugin extends SonarPlugin {
 
     // Parser(s)
     extensions.add(CoverageResultParser.class);
-    extensions.add(GallioResultParser.class);
+    extensions.add(UnitTestResultParser.class);
 
     // Sensors
     extensions.add(GallioSensor.class);
