@@ -21,9 +21,9 @@ package org.sonar.plugins.csharp.gallio.results.execution;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import org.codehaus.staxmate.SMInputFactory;
@@ -31,37 +31,131 @@ import org.codehaus.staxmate.in.SMHierarchicCursor;
 import org.codehaus.staxmate.in.SMInputCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.advanceCursor;
-import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.descendantElements;
+import org.sonar.api.utils.SonarException;
+import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.findAttributeValue;
+import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.findAttributeIntValue;
 import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.findElementName;
-import static org.sonar.plugins.csharp.gallio.results.execution.UnitTestResultParsingStrategy.LOG;
 import org.sonar.plugins.csharp.gallio.results.execution.model.TestCaseDetail;
-import org.sonar.plugins.csharp.gallio.results.execution.model.TestDescription;
+import org.sonar.plugins.csharp.gallio.results.execution.model.TestStatus;
 import org.sonar.plugins.csharp.gallio.results.execution.model.UnitTestReport;
 
 
-public class Nunit2ParsingStrategy extends UnitTestResultParsingStrategy {
+public class Nunit2ParsingStrategy implements UnitTestResultParsingStrategy {
 
-    
-    
-    public Set<UnitTestReport> parse(File report) throws XMLStreamException {
-      Map<String, TestCaseDetail> testCaseDetailsByTestIds = new HashMap<String, TestCaseDetail>();
-      Map<String, TestDescription> testsDetails = new HashMap<String, TestDescription>();
+    private static final Logger LOG = LoggerFactory.getLogger(GallioResultParser.class);    
+        
+    public Set<UnitTestReport> parse(File report) {
+      try {
+        Map<String, UnitTestReport> unitTestsReports = new HashMap<String, UnitTestReport>();
 
-      SMInputFactory inf = new SMInputFactory(XMLInputFactory.newInstance());
-      SMHierarchicCursor rootCursor = inf.rootElementCursor(report);
-      advanceCursor(rootCursor);
-      LOG.debug("rootCursor is at : {}", findElementName(rootCursor));
-      
-      //QName testModelTag = new QName(GALLIO_URI, "testModel");
-      //SMInputCursor testModelCursor = descendantElements(rootCursor);
-      
-      // Finally, we fill the reports
-      final Set<UnitTestReport> reports = createUnitTestsReport(testsDetails, testCaseDetailsByTestIds);
-      rootCursor.getStreamReader().closeCompletely();
-      LOG.debug("Parsing ended");
-      
-      return reports;
+
+        SMInputFactory inf = new SMInputFactory(XMLInputFactory.newInstance());
+        SMHierarchicCursor rootCursor = inf.rootElementCursor(report);
+        rootCursor.advance();
+        LOG.debug("rootCursor is at : {}", findElementName(rootCursor));
+        
+        SMInputCursor rootChildCursor = rootCursor.childElementCursor();
+        while (rootChildCursor.getNext() != null) {
+          handleRootChildElement(rootChildCursor, unitTestsReports, "");
+        }        
+        
+        Set<UnitTestReport> reports = new HashSet<UnitTestReport>();
+        reports.addAll(unitTestsReports.values());
+        
+        return reports;
+      } catch (XMLStreamException e) {
+        throw new SonarException("nunit report parsing error", e);        
+      }
     }
     
+    private void handleRootChildElement(SMInputCursor rootChildCursor, Map<String, UnitTestReport> reports, String assemblyName) throws XMLStreamException {
+      do{
+       String name = rootChildCursor.getLocalName();
+       if(name.equals("test-suite") || name.equals("results")) {
+         String nameAttr = findAttributeValue(rootChildCursor, "name");
+
+         if (nameAttr != null && (nameAttr.endsWith(".dll") || nameAttr.endsWith(".DLL"))) {
+           assemblyName = nameAttr;           
+         }
+         handleRootChildElement(rootChildCursor.childElementCursor().advance(), reports, assemblyName);
+       }  
+       
+       if(name.equals("test-case")) {
+         handleTestCases(rootChildCursor, reports, assemblyName);
+       }          
+      } while(rootChildCursor.getNext() != null);
+    }
+
+    private void handleTestCases(SMInputCursor childElementCursor, Map<String, UnitTestReport> reports, String assemblyName) throws XMLStreamException {
+        do {
+          
+          String name = findAttributeValue(childElementCursor, "name");
+          
+          if(name != null && !"".equals(name)){
+            String[] elems = name.split("\\.");
+            String textFixtureName = "";
+            for(Integer i = 0; i < elems.length -1; i++) {
+              textFixtureName += elems[i] + ".";              
+            }
+            
+            textFixtureName = textFixtureName.substring(0, textFixtureName.length() - 1);
+            
+            String testExecuted = findAttributeValue(childElementCursor, "executed");
+            String testCaseResult = findAttributeValue(childElementCursor, "result");
+            String testSuccess = findAttributeValue(childElementCursor, "success");
+            String testCaseTime = findAttributeValue(childElementCursor, "time");
+            Integer testCaseAsserts = findAttributeIntValue(childElementCursor, "asserts");   
+            
+            TestCaseDetail testCase = new TestCaseDetail();
+            testCase.setName(name);
+            testCase.setCountAsserts(testCaseAsserts);
+            testCase.setTimeMillis((int) Math.round(Double.parseDouble(testCaseTime) * 1000.));
+            if(testExecuted.equals("False"))
+            {
+              testCase.setStatus(TestStatus.SKIPPED);
+            } else {
+              if(testSuccess.equals("True"))
+              {
+                testCase.setStatus(TestStatus.SUCCESS);
+              } else {
+                testCase.setStatus(TestStatus.FAILED);                
+              }            
+            }
+                                              
+            if(reports.containsKey(textFixtureName)) {
+              UnitTestReport existentReport = reports.get(textFixtureName);
+              existentReport.addDetail(testCase);
+            } else {
+              UnitTestReport existentReport = new UnitTestReport();
+              existentReport.setAssemblyName(assemblyName);
+              existentReport.addDetail(testCase);
+              reports.put(textFixtureName, existentReport);
+            }                        
+          }
+        } while(childElementCursor.getNext() != null);
+    }
+
+  public boolean isCompatible(File report) {
+      boolean isCompatible = false;    
+      
+      try {                
+        SMInputFactory inf = new SMInputFactory(XMLInputFactory.newInstance());
+        SMHierarchicCursor rootCursor = inf.rootElementCursor(report);
+        rootCursor.advance();
+        SMInputCursor rootChildCursor = rootCursor.childElementCursor();
+        while (rootChildCursor.getNext() != null) {
+          String name = rootChildCursor.getLocalName();
+          if (name != null && name.equals("environment")) {
+            String version = findAttributeValue(rootChildCursor, "nunit-version");
+            if(version != null) {
+              isCompatible = true;
+            }
+          }
+        }       
+      } catch (XMLStreamException ex) {
+        LOG.debug("Report Not Compatible : {}", Nunit2ParsingStrategy.class);
+      }
+      
+      return isCompatible;      
+  }
 }

@@ -20,25 +20,16 @@
 package org.sonar.plugins.csharp.gallio.results.execution;
 
 import org.sonar.plugins.csharp.gallio.results.coverage.*;
-import org.codehaus.staxmate.SMInputFactory;
-import org.codehaus.staxmate.in.SMHierarchicCursor;
-import org.codehaus.staxmate.in.SMInputCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.BatchExtension;
-import org.sonar.api.utils.SonarException;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.findElementName;
 import org.sonar.plugins.csharp.gallio.results.execution.model.UnitTestReport;
 
 /**
@@ -64,10 +55,8 @@ public class UnitTestResultParser implements BatchExtension {
 
   public Set<UnitTestReport> parse(File report) {
     for (UnitTestResultParsingStrategy parser : parsingStrategies) {
-      try {
-          return parser.parse(report);
-      } catch (XMLStreamException e) {
-        LOG.trace("Report {} cannot be parsed by {}", report, parser);
+      if (parser.isCompatible(report)) {
+        return parser.parse(report);        
       }
     }
     return new HashSet<UnitTestReport>();

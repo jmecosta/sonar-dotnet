@@ -58,12 +58,7 @@ public class GallioResultParserTest {
   }
 
   private Collection<UnitTestReport> parse(String fileName) {
-      try {
-          return parser.parse(TestUtils.getResource("/Results/execution/" + fileName));
-      } catch (XMLStreamException ex) {
-          Assert.fail("Parser Exception Not Expected: " + ex.getStackTrace());
-          return null;
-      }
+    return parser.parse(TestUtils.getResource("/Results/execution/" + fileName));
   }
 
   @Test
@@ -88,7 +83,7 @@ public class GallioResultParserTest {
 
   }
 
-  @Test (expected=XMLStreamException.class) 
+  @Test (expected=NullPointerException.class) 
   public void testShouldThrowExceptionWhenInvalidFormatReport() throws XMLStreamException {
     Collection<UnitTestReport> reports = parser.parse(TestUtils.getResource("/Results/execution/nunit-report.xml"));
   }

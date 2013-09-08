@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--This file represents the results of running a test suite-->
-<test-results name="E:\TSSRC\DOT_APPS\ConstructionManagement\Test\ProjectOrganizer\ProjectOrganizer.Test\bin\Debug\ProjectOrganizer.Test.dll" total="118" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-09-07" time="16:04:39">
-  <environment nunit-version="2.6.2.12296" clr-version="2.0.50727.5472" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="E:\TSSRC\DOT_APPS\ConstructionManagement" machine-name="JOCS2" user="jocs" user-domain="TEKLAAD" />
+<test-results name="e:\SRC\TestAssembly.dll" total="118" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-09-07" time="16:04:39">
+  <environment nunit-version="2.6.2.12296" clr-version="2.0.50727.5472" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="E:\SRC" machine-name="machine" user="user" user-domain="domain" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="Assembly" name="E:\TSSRC\DOT_APPS\ConstructionManagement\Test\ProjectOrganizer\ProjectOrganizer.Test\bin\Debug\ProjectOrganizer.Test.dll" executed="True" result="Success" success="True" time="435.840" asserts="0">
+  <test-suite type="Assembly" name="e:\SRC\TestAssembly.dll" executed="True" result="Success" success="True" time="435.840" asserts="0">
     <results>
-      <test-suite type="Namespace" name="ProjectOrganizer" executed="True" result="Success" success="True" time="435.822" asserts="0">
+      <test-suite type="Namespace" name="ProjectUnderTest" executed="True" result="Success" success="True" time="435.822" asserts="0">
         <results>
           <test-suite type="Namespace" name="Test" executed="True" result="Success" success="True" time="435.821" asserts="0">
             <results>
@@ -13,48 +13,48 @@
                 <results>
                   <test-suite type="TestFixture" name="CategorizingExpressionFactoryTest" executed="True" result="Success" success="True" time="0.206" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategorizingExpressionFactoryTest.DirectlyReturnExpressionThatAsOnlyOperand" executed="True" result="Success" success="True" time="0.171" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnIntersectWhenMoreThanOneOperands" executed="True" result="Success" success="True" time="0.017" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnNullExpressionOnEmptyOperandList" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnNullExpressionOnNullOperand" executed="True" result="Success" success="True" time="0.000" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnUnionWhenMoreThanOneOperands" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategorizingExpressionFactoryTest.DirectlyReturnExpressionThatAsOnlyOperand" executed="True" result="Success" success="True" time="0.171" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnIntersectWhenMoreThanOneOperands" executed="True" result="Success" success="True" time="0.017" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnNullExpressionOnEmptyOperandList" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnNullExpressionOnNullOperand" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategorizingExpressionFactoryTest.ReturnUnionWhenMoreThanOneOperands" executed="True" result="Success" success="True" time="0.001" asserts="2" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="CategoryReferencingExecutorTest" executed="True" result="Success" success="True" time="0.092" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategoryReferencingExecutorTest.ConstructShouldThrowOnNullArgument" executed="True" result="Success" success="True" time="0.046" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategoryReferencingExecutorTest.ReferencingHierarchyCategory" executed="True" result="Success" success="True" time="0.037" asserts="3" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategoryReferencingExecutorTest.ReferencingLeafCategoryContainmentEmpty" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategoryReferencingExecutorTest.ReferencingLeafCategoryContainmentNotEmpty" executed="True" result="Success" success="True" time="0.001" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.CategoryReferencingExecutorTest.ShouldConstruct" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategoryReferencingExecutorTest.ConstructShouldThrowOnNullArgument" executed="True" result="Success" success="True" time="0.046" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategoryReferencingExecutorTest.ReferencingHierarchyCategory" executed="True" result="Success" success="True" time="0.037" asserts="3" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategoryReferencingExecutorTest.ReferencingLeafCategoryContainmentEmpty" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategoryReferencingExecutorTest.ReferencingLeafCategoryContainmentNotEmpty" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.CategoryReferencingExecutorTest.ShouldConstruct" executed="True" result="Success" success="True" time="0.001" asserts="1" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ExtensionsTest" executed="True" result="Success" success="True" time="0.023" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanNotReferenceIfCycledReferencingBetween2" executed="True" result="Success" success="True" time="0.008" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanNotReferenceIfCycledReferencingBetween3" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanNotReferenceIfCycledReferencingBetween4" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanNotReferenceSelf" executed="True" result="Success" success="True" time="0.000" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanReference1" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanReference3" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanReferenceAll" executed="True" result="Success" success="True" time="0.001" asserts="4" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanReferenceDescendantsWhenHierarchyRangeNotDertermined" executed="True" result="Success" success="True" time="0.000" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.ExtensionsTest.CanReferenceParentWhenReferencingOnlyNode" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanNotReferenceIfCycledReferencingBetween2" executed="True" result="Success" success="True" time="0.008" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanNotReferenceIfCycledReferencingBetween3" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanNotReferenceIfCycledReferencingBetween4" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanNotReferenceSelf" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanReference1" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanReference3" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanReferenceAll" executed="True" result="Success" success="True" time="0.001" asserts="4" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanReferenceDescendantsWhenHierarchyRangeNotDertermined" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.ExtensionsTest.CanReferenceParentWhenReferencingOnlyNode" executed="True" result="Success" success="True" time="0.001" asserts="1" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="SelectionFilterTest" executed="True" result="Success" success="True" time="0.013" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Categorizer.SelectionFilterTest.TestLoadSelectionFilters" executed="True" result="Success" success="True" time="0.006" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.SelectionFilterTest.TestSelectionFilterExecution" executed="True" result="Success" success="True" time="0.003" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.SelectionFilterTest.TestLoadSelectionFilters" executed="True" result="Success" success="True" time="0.006" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.SelectionFilterTest.TestSelectionFilterExecution" executed="True" result="Success" success="True" time="0.003" asserts="2" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="SetOperationExecutorTest" executed="True" result="Success" success="True" time="0.022" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Categorizer.SetOperationExecutorTest.ConstructShouldThrowOnNullExpression" executed="True" result="Success" success="True" time="0.002" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.SetOperationExecutorTest.ConstructShouldThrowOnNullHost" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.SetOperationExecutorTest.ShouldConstruct" executed="True" result="Success" success="True" time="0.002" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.SetOperationExecutorTest.TestIntersectExecution" executed="True" result="Success" success="True" time="0.007" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Categorizer.SetOperationExecutorTest.TestUnionExecution" executed="True" result="Success" success="True" time="0.004" asserts="3" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.SetOperationExecutorTest.ConstructShouldThrowOnNullExpression" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.SetOperationExecutorTest.ConstructShouldThrowOnNullHost" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.SetOperationExecutorTest.ShouldConstruct" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.SetOperationExecutorTest.TestIntersectExecution" executed="True" result="Success" success="True" time="0.007" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Categorizer.SetOperationExecutorTest.TestUnionExecution" executed="True" result="Success" success="True" time="0.004" asserts="3" />
                     </results>
                   </test-suite>
                 </results>
@@ -63,96 +63,96 @@
                 <results>
                   <test-suite type="TestFixture" name="CategorizingPropertyTest" executed="True" result="Success" success="True" time="0.003" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.CategorizingPropertyTest.NullExpressionAsDefault" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Data.CategorizingPropertyTest.ShouldGetSetExpression" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategorizingPropertyTest.NullExpressionAsDefault" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategorizingPropertyTest.ShouldGetSetExpression" executed="True" result="Success" success="True" time="0.001" asserts="1" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="CategoryNodeTest" executed="True" result="Success" success="True" time="0.022" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.CategoryNodeTest.TestCyclicOwnershipDetection" executed="True" result="Success" success="True" time="0.003" asserts="6" />
-                      <test-case name="ProjectOrganizer.Test.Data.CategoryNodeTest.TestInsertRemoveChild" executed="True" result="Success" success="True" time="0.005" asserts="11" />
-                      <test-case name="ProjectOrganizer.Test.Data.CategoryNodeTest.TestParentChild" executed="True" result="Success" success="True" time="0.002" asserts="14" />
-                      <test-case name="ProjectOrganizer.Test.Data.CategoryNodeTest.TestProxyObjectCountInHierarchy" executed="True" result="Success" success="True" time="0.007" asserts="4" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategoryNodeTest.TestCyclicOwnershipDetection" executed="True" result="Success" success="True" time="0.003" asserts="6" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategoryNodeTest.TestInsertRemoveChild" executed="True" result="Success" success="True" time="0.005" asserts="11" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategoryNodeTest.TestParentChild" executed="True" result="Success" success="True" time="0.002" asserts="14" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategoryNodeTest.TestProxyObjectCountInHierarchy" executed="True" result="Success" success="True" time="0.007" asserts="4" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="CategoryReferencingTest" executed="True" result="Success" success="True" time="0.006" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.CategoryReferencingTest.ConstructorShouldWork" executed="True" result="Success" success="True" time="0.002" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Data.CategoryReferencingTest.ConstructorThrowsExceptionOnNullArgument" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategoryReferencingTest.ConstructorShouldWork" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.CategoryReferencingTest.ConstructorThrowsExceptionOnNullArgument" executed="True" result="Success" success="True" time="0.001" asserts="1" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="DataTypeConverterTest" executed="True" result="Success" success="True" time="0.004" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.DataTypeConverterTest.TestDataTypeConversion" executed="True" result="Success" success="True" time="0.002" asserts="3" />
-                      <test-case name="ProjectOrganizer.Test.Data.DataTypeConverterTest.TestTypeCovnersion" executed="True" result="Success" success="True" time="0.001" asserts="4" />
+                      <test-case name="ProjectUnderTest.Test.Data.DataTypeConverterTest.TestDataTypeConversion" executed="True" result="Success" success="True" time="0.002" asserts="3" />
+                      <test-case name="ProjectUnderTest.Test.Data.DataTypeConverterTest.TestTypeCovnersion" executed="True" result="Success" success="True" time="0.001" asserts="4" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="GeometryBoundingTest" executed="True" result="Success" success="True" time="0.010" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.GeometryBoundingTest.TestGeometryBounding" executed="True" result="Success" success="True" time="0.009" asserts="4" />
+                      <test-case name="ProjectUnderTest.Test.Data.GeometryBoundingTest.TestGeometryBounding" executed="True" result="Success" success="True" time="0.009" asserts="4" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ModelGridTest" executed="True" result="Success" success="True" time="0.009" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.ModelGridTest.TestModelGrid" executed="True" result="Success" success="True" time="0.006" asserts="8" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelGridTest.TestModelGridDefault" executed="True" result="Success" success="True" time="0.001" asserts="8" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelGridTest.TestModelGrid" executed="True" result="Success" success="True" time="0.006" asserts="8" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelGridTest.TestModelGridDefault" executed="True" result="Success" success="True" time="0.001" asserts="8" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ModelNodeTest" executed="True" result="Success" success="True" time="0.061" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.AddChildTest" executed="True" result="Success" success="True" time="0.001" asserts="4" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.AncestorTest" executed="True" result="Success" success="True" time="0.002" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.BreadthFirstEnumerableTest" executed="True" result="Success" success="True" time="0.008" asserts="12" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.ConstructorChildrenTest" executed="True" result="Success" success="True" time="0.002" asserts="8" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.ConstructorNodeNameTest" executed="True" result="Success" success="True" time="0.001" asserts="3" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.ConstructorParentTest" executed="True" result="Success" success="True" time="0.000" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.DefaultConstructorTest" executed="True" result="Success" success="True" time="0.001" asserts="6" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.DepthFirstEnumerableTest" executed="True" result="Success" success="True" time="0.008" asserts="12" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.DepthTest" executed="True" result="Success" success="True" time="0.002" asserts="3" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.EqualityTest" executed="True" result="Success" success="True" time="0.001" asserts="7" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.InitializeTest" executed="True" result="Success" success="True" time="0.003" asserts="4" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.LeafConstraintTest" executed="True" result="Success" success="True" time="0.002" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.ParentTest" executed="True" result="Success" success="True" time="0.001" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.RemoveChildTest" executed="True" result="Success" success="True" time="0.001" asserts="4" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.RootConstraintTest" executed="True" result="Success" success="True" time="0.001" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.RootTest" executed="True" result="Success" success="True" time="0.001" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.TestCyclicOwnershipDetection" executed="True" result="Success" success="True" time="0.002" asserts="6" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.TestInsertRemoveChild" executed="True" result="Success" success="True" time="0.001" asserts="11" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelNodeTest.TestParentChild" executed="True" result="Success" success="True" time="0.002" asserts="14" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.AddChildTest" executed="True" result="Success" success="True" time="0.001" asserts="4" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.AncestorTest" executed="True" result="Success" success="True" time="0.002" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.BreadthFirstEnumerableTest" executed="True" result="Success" success="True" time="0.008" asserts="12" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.ConstructorChildrenTest" executed="True" result="Success" success="True" time="0.002" asserts="8" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.ConstructorNodeNameTest" executed="True" result="Success" success="True" time="0.001" asserts="3" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.ConstructorParentTest" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.DefaultConstructorTest" executed="True" result="Success" success="True" time="0.001" asserts="6" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.DepthFirstEnumerableTest" executed="True" result="Success" success="True" time="0.008" asserts="12" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.DepthTest" executed="True" result="Success" success="True" time="0.002" asserts="3" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.EqualityTest" executed="True" result="Success" success="True" time="0.001" asserts="7" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.InitializeTest" executed="True" result="Success" success="True" time="0.003" asserts="4" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.LeafConstraintTest" executed="True" result="Success" success="True" time="0.002" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.ParentTest" executed="True" result="Success" success="True" time="0.001" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.RemoveChildTest" executed="True" result="Success" success="True" time="0.001" asserts="4" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.RootConstraintTest" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.RootTest" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.TestCyclicOwnershipDetection" executed="True" result="Success" success="True" time="0.002" asserts="6" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.TestInsertRemoveChild" executed="True" result="Success" success="True" time="0.001" asserts="11" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelNodeTest.TestParentChild" executed="True" result="Success" success="True" time="0.002" asserts="14" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ModelObjectPropertyDefinitionTest" executed="True" result="Success" success="True" time="0.020" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyDefinitionTest.TestModelObjectPropertyDefinition1" executed="True" result="Success" success="True" time="0.012" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyDefinitionTest.TestModelObjectPropertyDefinition2" executed="True" result="Success" success="True" time="0.001" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyDefinitionTest.TestModelObjectPropertyDefinition3" executed="True" result="Success" success="True" time="0.002" asserts="6" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyDefinitionTest.TestPresentationName" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyDefinitionTest.TestModelObjectPropertyDefinition1" executed="True" result="Success" success="True" time="0.012" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyDefinitionTest.TestModelObjectPropertyDefinition2" executed="True" result="Success" success="True" time="0.001" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyDefinitionTest.TestModelObjectPropertyDefinition3" executed="True" result="Success" success="True" time="0.002" asserts="6" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyDefinitionTest.TestPresentationName" executed="True" result="Success" success="True" time="0.001" asserts="2" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ModelObjectPropertyTest" executed="True" result="Success" success="True" time="0.030" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyTest.TestCreateModelObjectProperty" executed="True" result="Success" success="True" time="0.013" asserts="3" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyTest.TestDoublePropertyValue" executed="True" result="Success" success="True" time="0.003" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyTest.TestIntPropertyValue" executed="True" result="Success" success="True" time="0.002" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyTest.TestInvalidValue" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyTest.TestStringPropertyValue" executed="True" result="Success" success="True" time="0.003" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyTest.TestValueCanBeInvalidated" executed="True" result="Success" success="True" time="0.000" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Data.ModelObjectPropertyTest.TestValueCanBeValidated" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyTest.TestCreateModelObjectProperty" executed="True" result="Success" success="True" time="0.013" asserts="3" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyTest.TestDoublePropertyValue" executed="True" result="Success" success="True" time="0.003" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyTest.TestIntPropertyValue" executed="True" result="Success" success="True" time="0.002" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyTest.TestInvalidValue" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyTest.TestStringPropertyValue" executed="True" result="Success" success="True" time="0.003" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyTest.TestValueCanBeInvalidated" executed="True" result="Success" success="True" time="0.000" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ModelObjectPropertyTest.TestValueCanBeValidated" executed="True" result="Success" success="True" time="0.001" asserts="2" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ProxyObjectTest" executed="True" result="Success" success="True" time="0.009" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.ProxyObjectTest.TestObjectsAreEqual" executed="True" result="Success" success="True" time="0.001" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.Data.ProxyObjectTest.TestObjectsProperties" executed="True" result="Success" success="True" time="0.006" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.ProxyObjectTest.TestObjectsAreEqual" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.Data.ProxyObjectTest.TestObjectsProperties" executed="True" result="Success" success="True" time="0.006" asserts="1" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="SetOperationTest" executed="True" result="Success" success="True" time="0.010" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Data.SetOperationTest.AllowOneOperand" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Data.SetOperationTest.ShouldCreateIntersect" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Data.SetOperationTest.ShouldCreateUnion" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Data.SetOperationTest.ShouldThrowOnNullList" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Data.SetOperationTest.ShouldThrowOnZeroOperand" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.SetOperationTest.AllowOneOperand" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.SetOperationTest.ShouldCreateIntersect" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.SetOperationTest.ShouldCreateUnion" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.SetOperationTest.ShouldThrowOnNullList" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Data.SetOperationTest.ShouldThrowOnZeroOperand" executed="True" result="Success" success="True" time="0.001" asserts="1" />
                     </results>
                   </test-suite>
                 </results>
@@ -161,10 +161,10 @@
                 <results>
                   <test-suite type="TestFixture" name="UndoRedoTests" executed="True" result="Success" success="True" time="0.473" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.DatabaseManager.UndoRedoTests.TestInsertRedo" executed="True" result="Success" success="True" time="0.428" asserts="3" />
-                      <test-case name="ProjectOrganizer.Test.DatabaseManager.UndoRedoTests.TestInsertUndo" executed="True" result="Success" success="True" time="0.009" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.DatabaseManager.UndoRedoTests.TestUpdateRedo" executed="True" result="Success" success="True" time="0.019" asserts="9" />
-                      <test-case name="ProjectOrganizer.Test.DatabaseManager.UndoRedoTests.TestUpdateUndo" executed="True" result="Success" success="True" time="0.012" asserts="7" />
+                      <test-case name="ProjectUnderTest.Test.DatabaseManager.UndoRedoTests.TestInsertRedo" executed="True" result="Success" success="True" time="0.428" asserts="3" />
+                      <test-case name="ProjectUnderTest.Test.DatabaseManager.UndoRedoTests.TestInsertUndo" executed="True" result="Success" success="True" time="0.009" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.DatabaseManager.UndoRedoTests.TestUpdateRedo" executed="True" result="Success" success="True" time="0.019" asserts="9" />
+                      <test-case name="ProjectUnderTest.Test.DatabaseManager.UndoRedoTests.TestUpdateUndo" executed="True" result="Success" success="True" time="0.012" asserts="7" />
                     </results>
                   </test-suite>
                 </results>
@@ -173,12 +173,12 @@
                 <results>
                   <test-suite type="TestFixture" name="DataRetrieverTest" executed="True" result="Success" success="True" time="266.938" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.DataRetriever.DataRetrieverTest.AllEmpty" executed="True" result="Success" success="True" time="213.665" asserts="6" />
-                      <test-case name="ProjectOrganizer.Test.DataRetriever.DataRetrieverTest.NonExistentObjects" executed="True" result="Success" success="True" time="4.425" asserts="6" />
-                      <test-case name="ProjectOrganizer.Test.DataRetriever.DataRetrieverTest.RetrieveTest" executed="True" result="Success" success="True" time="11.381" asserts="21" />
-                      <test-case name="ProjectOrganizer.Test.DataRetriever.DataRetrieverTest.RetrieveTestForAllObjects" executed="True" result="Success" success="True" time="8.874" asserts="18" />
-                      <test-case name="ProjectOrganizer.Test.DataRetriever.DataRetrieverTest.RetrieveTestForBeamTypeObjects" executed="True" result="Success" success="True" time="8.485" asserts="18" />
-                      <test-case name="ProjectOrganizer.Test.DataRetriever.DataRetrieverTest.TestForFilterRetrieve" executed="True" result="Success" success="True" time="20.075" asserts="9" />
+                      <test-case name="ProjectUnderTest.Test.DataRetriever.DataRetrieverTest.AllEmpty" executed="True" result="Success" success="True" time="213.665" asserts="6" />
+                      <test-case name="ProjectUnderTest.Test.DataRetriever.DataRetrieverTest.NonExistentObjects" executed="True" result="Success" success="True" time="4.425" asserts="6" />
+                      <test-case name="ProjectUnderTest.Test.DataRetriever.DataRetrieverTest.RetrieveTest" executed="True" result="Success" success="True" time="11.381" asserts="21" />
+                      <test-case name="ProjectUnderTest.Test.DataRetriever.DataRetrieverTest.RetrieveTestForAllObjects" executed="True" result="Success" success="True" time="8.874" asserts="18" />
+                      <test-case name="ProjectUnderTest.Test.DataRetriever.DataRetrieverTest.RetrieveTestForBeamTypeObjects" executed="True" result="Success" success="True" time="8.485" asserts="18" />
+                      <test-case name="ProjectUnderTest.Test.DataRetriever.DataRetrieverTest.TestForFilterRetrieve" executed="True" result="Success" success="True" time="20.075" asserts="9" />
                     </results>
                   </test-suite>
                 </results>
@@ -187,12 +187,12 @@
                 <results>
                   <test-suite type="TestFixture" name="AlphaNumericComparerTest" executed="True" result="Success" success="True" time="0.034" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.General.AlphaNumericComparerTest.AlphabeticComparerGreater" executed="True" result="Success" success="True" time="0.007" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.General.AlphaNumericComparerTest.AlphabeticComparerLesser" executed="True" result="Success" success="True" time="0.001" asserts="5" />
-                      <test-case name="ProjectOrganizer.Test.General.AlphaNumericComparerTest.AlphaNumericComparerGreater" executed="True" result="Success" success="True" time="0.002" asserts="19" />
-                      <test-case name="ProjectOrganizer.Test.General.AlphaNumericComparerTest.AlphaNumericComparerLesser" executed="True" result="Success" success="True" time="0.002" asserts="19" />
-                      <test-case name="ProjectOrganizer.Test.General.AlphaNumericComparerTest.NumericComparerGreater" executed="True" result="Success" success="True" time="0.001" asserts="10" />
-                      <test-case name="ProjectOrganizer.Test.General.AlphaNumericComparerTest.NumericComparerLesser" executed="True" result="Success" success="True" time="0.001" asserts="10" />
+                      <test-case name="ProjectUnderTest.Test.General.AlphaNumericComparerTest.AlphabeticComparerGreater" executed="True" result="Success" success="True" time="0.007" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.General.AlphaNumericComparerTest.AlphabeticComparerLesser" executed="True" result="Success" success="True" time="0.001" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.General.AlphaNumericComparerTest.AlphaNumericComparerGreater" executed="True" result="Success" success="True" time="0.002" asserts="19" />
+                      <test-case name="ProjectUnderTest.Test.General.AlphaNumericComparerTest.AlphaNumericComparerLesser" executed="True" result="Success" success="True" time="0.002" asserts="19" />
+                      <test-case name="ProjectUnderTest.Test.General.AlphaNumericComparerTest.NumericComparerGreater" executed="True" result="Success" success="True" time="0.001" asserts="10" />
+                      <test-case name="ProjectUnderTest.Test.General.AlphaNumericComparerTest.NumericComparerLesser" executed="True" result="Success" success="True" time="0.001" asserts="10" />
                     </results>
                   </test-suite>
                 </results>
@@ -201,36 +201,36 @@
                 <results>
                   <test-suite type="TestFixture" name="CategoryHierarchySerializeTest" executed="True" result="Success" success="True" time="10.789" asserts="1">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Modeler.CategoryHierarchySerializeTest.XmlSerialize" executed="True" result="Success" success="True" time="9.397" asserts="0" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.CategoryHierarchySerializeTest.XmlSerialize1" executed="True" result="Success" success="True" time="0.394" asserts="0" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.CategoryHierarchySerializeTest.XmlSerialize" executed="True" result="Success" success="True" time="9.397" asserts="0" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.CategoryHierarchySerializeTest.XmlSerialize1" executed="True" result="Success" success="True" time="0.394" asserts="0" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ExtensionsTest" executed="True" result="Success" success="True" time="0.015" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Modeler.ExtensionsTest.TestHasCyclicReferencingRecursiveNegative" executed="True" result="Success" success="True" time="0.010" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.ExtensionsTest.TestHasCyclicReferencingRecursivePositive" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.ExtensionsTest.TestHasCyclicReferencingRecursiveNegative" executed="True" result="Success" success="True" time="0.010" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.ExtensionsTest.TestHasCyclicReferencingRecursivePositive" executed="True" result="Success" success="True" time="0.001" asserts="1" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="FormulaResolveTest" executed="True" result="Success" success="True" time="0.251" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Modeler.FormulaResolveTest.TestFormulasResolve" executed="True" result="Success" success="True" time="0.250" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.FormulaResolveTest.TestFormulasResolve" executed="True" result="Success" success="True" time="0.250" asserts="1" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="LbsCalculationTest" executed="True" result="Success" success="True" time="0.104" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption1" executed="True" result="Success" success="True" time="0.073" asserts="12" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption2" executed="True" result="Success" success="True" time="0.003" asserts="12" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption3" executed="True" result="Success" success="True" time="0.001" asserts="12" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption4" executed="True" result="Success" success="True" time="0.008" asserts="16" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption5" executed="True" result="Success" success="True" time="0.006" asserts="12" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption6" executed="True" result="Success" success="True" time="0.001" asserts="16" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption7" executed="True" result="Success" success="True" time="0.002" asserts="16" />
-                      <test-case name="ProjectOrganizer.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption8" executed="True" result="Success" success="True" time="0.001" asserts="16" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption1" executed="True" result="Success" success="True" time="0.073" asserts="12" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption2" executed="True" result="Success" success="True" time="0.003" asserts="12" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption3" executed="True" result="Success" success="True" time="0.001" asserts="12" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption4" executed="True" result="Success" success="True" time="0.008" asserts="16" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption5" executed="True" result="Success" success="True" time="0.006" asserts="12" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption6" executed="True" result="Success" success="True" time="0.001" asserts="16" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption7" executed="True" result="Success" success="True" time="0.002" asserts="16" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.LbsCalculationTest.CalculateLbsWithOption8" executed="True" result="Success" success="True" time="0.001" asserts="16" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="ObjectBrowseTableXmlSerializeTest" executed="True" result="Success" success="True" time="0.138" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.Modeler.ObjectBrowseTableXmlSerializeTest.XmlSerialize" executed="True" result="Success" success="True" time="0.137" asserts="5" />
+                      <test-case name="ProjectUnderTest.Test.Modeler.ObjectBrowseTableXmlSerializeTest.XmlSerialize" executed="True" result="Success" success="True" time="0.137" asserts="5" />
                     </results>
                   </test-suite>
                 </results>
@@ -239,16 +239,16 @@
                 <results>
                   <test-suite type="TestFixture" name="ParserTest" executed="True" result="Success" success="True" time="0.040" asserts="0">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectEmptyBracketPair" executed="True" result="Success" success="True" time="0.007" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectInputInPostfixNotation" executed="True" result="Success" success="True" time="0.009" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectInputInPrefixNotation" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectMismatchedCloseBracket" executed="True" result="Success" success="True" time="0.002" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectMismatchedOpenBracket" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectTooManyOperands" executed="True" result="Success" success="True" time="0.002" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectTooManyOperandsInBrackets" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.DetectTooManyOperators" executed="True" result="Success" success="True" time="0.002" asserts="1" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.ParseValidInput" executed="True" result="Success" success="True" time="0.001" asserts="2" />
-                      <test-case name="ProjectOrganizer.Test.ObjectBrowserViewModel.ParserTest.ParseValidInputPropertyDefinition" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectEmptyBracketPair" executed="True" result="Success" success="True" time="0.007" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectInputInPostfixNotation" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectInputInPrefixNotation" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectMismatchedCloseBracket" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectMismatchedOpenBracket" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectTooManyOperands" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectTooManyOperandsInBrackets" executed="True" result="Success" success="True" time="0.001" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.DetectTooManyOperators" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.ParseValidInput" executed="True" result="Success" success="True" time="0.001" asserts="2" />
+                      <test-case name="ProjectUnderTest.Test.ObjectBrowserViewModel.ParserTest.ParseValidInputPropertyDefinition" executed="True" result="Success" success="True" time="0.001" asserts="2" />
                     </results>
                   </test-suite>
                 </results>
@@ -257,12 +257,12 @@
                 <results>
                   <test-suite type="TestFixture" name="ExportTsHierarchicalTreeTest" executed="True" result="Success" success="True" time="113.290" asserts="1">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.TSAdaptation.ExportTsHierarchicalTreeTest.TestCreatedHierarchicObjects" executed="True" result="Success" success="True" time="112.804" asserts="24" />
+                      <test-case name="ProjectUnderTest.Test.TSAdaptation.ExportTsHierarchicalTreeTest.TestCreatedHierarchicObjects" executed="True" result="Success" success="True" time="112.804" asserts="24" />
                     </results>
                   </test-suite>
                   <test-suite type="TestFixture" name="GridConversionTest" executed="True" result="Success" success="True" time="43.102" asserts="1">
                     <results>
-                      <test-case name="ProjectOrganizer.Test.TSAdaptation.GridConversionTest.GetTsModelGrid" executed="True" result="Success" success="True" time="42.616" asserts="6" />
+                      <test-case name="ProjectUnderTest.Test.TSAdaptation.GridConversionTest.GetTsModelGrid" executed="True" result="Success" success="True" time="42.616" asserts="6" />
                     </results>
                   </test-suite>
                 </results>

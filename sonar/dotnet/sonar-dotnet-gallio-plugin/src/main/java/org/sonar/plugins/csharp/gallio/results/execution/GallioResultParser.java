@@ -46,6 +46,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import org.sonar.api.utils.SonarException;
 
 import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.advanceCursor;
 import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.descendantElements;
@@ -61,7 +63,7 @@ import static org.sonar.plugins.csharp.gallio.helper.StaxHelper.nextPosition;
  * @author Maxime SCHNEIDER-DUFEUTRELLE
  * 
  */
-public class GallioResultParser extends UnitTestResultParsingStrategy {
+public class GallioResultParser implements UnitTestResultParsingStrategy {
 
   private static final String LOG_PATTERN = "--{} : {}";
   private static final String GALLIO_REPORT_PARSING_ERROR = "gallio report parsing error";
@@ -73,7 +75,10 @@ public class GallioResultParser extends UnitTestResultParsingStrategy {
   private static final String PATH = "path";
   private static final String LINE = "line";
 
-  public Set<UnitTestReport> parse(File report) throws XMLStreamException {
+  private static final Logger LOG = LoggerFactory.getLogger(GallioResultParser.class);
+  
+  public Set<UnitTestReport> parse(File report) {
+    try {
       Map<String, TestCaseDetail> testCaseDetailsByTestIds = new HashMap<String, TestCaseDetail>();
       SMInputFactory inf = new SMInputFactory(XMLInputFactory.newInstance());
       SMHierarchicCursor rootCursor = inf.rootElementCursor(report);
@@ -103,7 +108,76 @@ public class GallioResultParser extends UnitTestResultParsingStrategy {
       LOG.debug("Parsing ended");
 
       return reports;
+    } catch (XMLStreamException e) {
+      throw new SonarException(GALLIO_REPORT_PARSING_ERROR, e);
+    }
   }
+  
+  private Set<UnitTestReport> createUnitTestsReport(Map<String, TestDescription> testsDescriptionByTestIds, Map<String, TestCaseDetail> testCaseDetailsByTestIds) {
+
+    Set<UnitTestReport> result = new HashSet<UnitTestReport>();
+    Set<String> testIds = testCaseDetailsByTestIds.keySet();
+    // We associate the descriptions with the test details
+    List<String> testsToRemove = new ArrayList<String>();
+    for (String testId : testIds) {
+      TestDescription description = testsDescriptionByTestIds.get(testId);
+      TestCaseDetail testCaseDetail = testCaseDetailsByTestIds.get(testId);
+      if (description == null) {
+        LOG.debug(
+            "Test {} is not considered as a testCase in your xml, there should not be any testStep associated, please check your test report. Skipping result",
+            testId);
+        testsToRemove.add(testId);
+      } else {
+        testCaseDetail.merge(description);
+        testCaseDetailsByTestIds.put(testId, testCaseDetail);
+      }
+    }
+
+    LOG.debug("Tests to be removed {}", testsToRemove.size());
+    for (String testToRemove : testsToRemove) {
+      testCaseDetailsByTestIds.remove(testToRemove);
+    }
+
+    Collection<TestCaseDetail> testCases = testCaseDetailsByTestIds.values();
+    Multimap<String, TestCaseDetail> testCaseDetailsBySrcKey = ArrayListMultimap.create();
+    for (TestCaseDetail testCaseDetail : testCases) {
+      String sourceKey = testCaseDetail.createSourceKey();
+      testCaseDetailsBySrcKey.put(sourceKey, testCaseDetail);
+    }
+
+    Map<String, UnitTestReport> unitTestsReports = new HashMap<String, UnitTestReport>();
+    LOG.debug("testCaseDetails size : {}", String.valueOf(testCaseDetailsByTestIds.size()));
+
+    Set<String> pathKeys = testCaseDetailsBySrcKey.keySet();
+    LOG.debug("There are {} different pathKeys", String.valueOf(pathKeys.size()));
+    for (String pathKey : pathKeys) {
+      // If the Key already exists in the map, we add the details
+      if (unitTestsReports.containsKey(pathKey)) {
+        UnitTestReport unitTest = unitTestsReports.get(pathKey);
+        for (TestCaseDetail testDetail : testCaseDetailsBySrcKey.get(pathKey)) {
+          LOG.debug("Adding testDetail {} to the unitTestReport", testDetail.getName());
+          unitTest.addDetail(testDetail);
+        }
+        unitTestsReports.put(pathKey, unitTest);
+      } else {
+        // Else we create a new report
+        UnitTestReport unitTest = new UnitTestReport();
+        unitTest.setAssemblyName(testCaseDetailsBySrcKey.get(pathKey).iterator().next().getAssemblyName());
+        unitTest.setSourceFile(testCaseDetailsBySrcKey.get(pathKey).iterator().next().getSourceFile());
+        LOG.debug("Create new unitTest for path : {}", unitTest.getSourceFile().getPath());
+        for (TestCaseDetail testDetail : testCaseDetailsBySrcKey.get(pathKey)) {
+          LOG.debug("+ and add details : {}", testDetail.getName());
+          unitTest.addDetail(testDetail);
+        }
+        unitTestsReports.put(pathKey, unitTest);
+      }
+    }
+    result.addAll(unitTestsReports.values());
+
+    LOG.debug("The result Set contains " + result.size() + " report(s)");
+
+    return result;
+  }  
 
   private Map<String, TestDescription> recursiveParseTestsIds(SMInputCursor rootCursor, Map<String, TestDescription> testDetails,
       File source, String parentAssemblyName) throws XMLStreamException {
@@ -339,5 +413,9 @@ public class GallioResultParser extends UnitTestResultParsingStrategy {
         }
       }
     }
+  }
+
+  public boolean isCompatible(File report) {
+    return true;
   }
 }

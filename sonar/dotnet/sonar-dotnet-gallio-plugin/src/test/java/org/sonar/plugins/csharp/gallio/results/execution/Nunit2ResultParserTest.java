@@ -58,20 +58,20 @@ public class Nunit2ResultParserTest {
   }
 
   private Collection<UnitTestReport> parse(String fileName) {
-      try {
-          return parser.parse(TestUtils.getResource("/Results/execution/" + fileName));
-      } catch (XMLStreamException ex) {
-          Assert.fail("Parser Exception Not Expected: " + ex.getStackTrace());
-          return null;
-      }
+    return parser.parse(TestUtils.getResource("/Results/execution/" + fileName));
   }
 
-  //@Test (expected=XMLStreamException.class) 
-  public void testShouldThrowExceptionWhenInvalidFormatReport() throws XMLStreamException {
-    Collection<UnitTestReport> reports = parser.parse(TestUtils.getResource("/Results/execution/gallio-report.xml"));
+  @Test
+  public void testIsNotCompatible() {
+    assertFalse(parser.isCompatible(TestUtils.getResource("/Results/execution/gallio-report.xml")));    
   }
   
-  //@Test
+  @Test
+  public void testIsCompatible() {
+    assertTrue(parser.isCompatible(TestUtils.getResource("/Results/execution/nunit-report.xml")));    
+  }  
+  
+  @Test
   public void testReportParsing() {
     Collection<UnitTestReport> reports = parse("nunit-report.xml");
 
@@ -79,17 +79,16 @@ public class Nunit2ResultParserTest {
 
     Iterator<UnitTestReport> report = reports.iterator();
 
+    assertEquals(27, reports.size());
     assertTrue(report.hasNext());
 
     UnitTestReport firstReport = report.next();
 
-    assertEquals("cs-failures", firstReport.getAssemblyName());
-    assertEquals(6, firstReport.getAsserts());
-    assertEquals(3, firstReport.getFailures());
-    assertEquals(1, firstReport.getSkipped());
-    assertTrue(StringUtils.contains(firstReport.getSourceFile().getName(), "CSharpTest.cs"));
-    assertEquals(6, firstReport.getTests());
-    assertEquals(420, firstReport.getTimeMS());
-
+    assertEquals("e:\\SRC\\TestAssembly.dll", firstReport.getAssemblyName());
+    assertEquals(7, firstReport.getAsserts());
+    assertEquals(0, firstReport.getFailures());
+    assertEquals(0, firstReport.getSkipped());
+    assertEquals(2, firstReport.getTests());
+    assertEquals(3, firstReport.getTimeMS());
   }
 }

@@ -74,11 +74,7 @@ public final class StaxHelper {
   /**
    * Check if the cursor is positioned at a start element
    */
-  public static boolean isAStartElement(SMInputCursor cursor) throws XMLStreamException {
-    if(cursor.asEvent() == null) {
-      throw new XMLStreamException("Cannot parse Xml Report");
-    }
-    
+  public static boolean isAStartElement(SMInputCursor cursor) {    
     try {
       return cursor.asEvent().isStartElement();
     } catch (XMLStreamException e) {
