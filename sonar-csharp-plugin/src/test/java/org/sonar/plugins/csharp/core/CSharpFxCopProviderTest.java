@@ -41,6 +41,7 @@ public class CSharpFxCopProviderTest {
       "sonar.cs.fxcop.assembly",
       "sonar.cs.fxcop.timeoutMinutes",
       "sonar.cs.fxcop.fxCopCmdPath",
+      "sonar.cs.fxcop.directory");
       "sonar.cs.fxcop.customRules");
   }
 
