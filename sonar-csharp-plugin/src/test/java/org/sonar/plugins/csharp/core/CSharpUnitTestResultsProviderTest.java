@@ -22,26 +22,23 @@ package org.sonar.plugins.csharp.core;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import org.sonar.api.config.PropertyDefinition;
-import org.sonar.plugins.csharp.core.CSharpCodeCoverageProvider.CSharpCoverageAggregator;
-import org.sonar.plugins.csharp.core.CSharpCodeCoverageProvider.CSharpCoverageReportImportSensor;
+import org.sonar.plugins.csharp.core.CSharpUnitTestResultsProvider.CSharpUnitTestResultsAggregator;
+import org.sonar.plugins.csharp.core.CSharpUnitTestResultsProvider.CSharpUnitTestResultsImportSensor;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class CSharpCodeCoverageProviderTest {
+public class CSharpUnitTestResultsProviderTest {
 
   @Test
   public void test() {
-    assertThat(nonProperties(CSharpCodeCoverageProvider.extensions())).containsOnly(
-      CSharpCoverageAggregator.class,
-      CSharpCoverageReportImportSensor.class);
-    assertThat(propertyKeys(CSharpCodeCoverageProvider.extensions())).containsOnly(
-      "sonar.cs.ncover3.reportsPaths",
-      "sonar.cs.opencover.reportsPaths",
-      "sonar.cs.dotcover.reportsPaths",
-      "sonar.cs.vscoveragexml.reportsPaths");
+    assertThat(nonProperties(CSharpUnitTestResultsProvider.extensions())).containsOnly(
+      CSharpUnitTestResultsAggregator.class,
+      CSharpUnitTestResultsImportSensor.class);
+    assertThat(propertyKeys(CSharpUnitTestResultsProvider.extensions())).containsOnly(
+      "sonar.cs.vstest.reportsPaths");
   }
 
   private static Set<String> nonProperties(List extensions) {

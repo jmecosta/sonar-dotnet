@@ -38,16 +38,21 @@ public class CSharpCodeCoverageProvider {
   private static final String NCOVER3_PROPERTY_KEY = "sonar.cs.ncover3.reportsPaths";
   private static final String OPENCOVER_PROPERTY_KEY = "sonar.cs.opencover.reportsPaths";
   private static final String DOTCOVER_PROPERTY_KEY = "sonar.cs.dotcover.reportsPaths";
+  private static final String VISUAL_STUDIO_COVERAGE_XML_PROPERTY_KEY = "sonar.cs.vscoveragexml.reportsPaths";
 
   private static final CoverageConfiguration COVERAGE_CONF = new CoverageConfiguration(
     CSharpConstants.LANGUAGE_KEY,
     NCOVER3_PROPERTY_KEY,
     OPENCOVER_PROPERTY_KEY,
-    DOTCOVER_PROPERTY_KEY);
+    DOTCOVER_PROPERTY_KEY,
+    VISUAL_STUDIO_COVERAGE_XML_PROPERTY_KEY);
+
+  private CSharpCodeCoverageProvider() {
+  }
 
   public static List extensions() {
     return ImmutableList.of(
-      CSharpCoverageParserFactory.class,
+      CSharpCoverageAggregator.class,
       CSharpCoverageReportImportSensor.class,
       PropertyDefinition.builder(NCOVER3_PROPERTY_KEY)
         .name("NCover3 Reports Paths")
@@ -69,12 +74,19 @@ public class CSharpCodeCoverageProvider {
         .category(CATEGORY)
         .subCategory(SUBCATEGORY)
         .onlyOnQualifiers(Qualifiers.PROJECT, Qualifiers.MODULE)
+        .build(),
+      PropertyDefinition.builder(VISUAL_STUDIO_COVERAGE_XML_PROPERTY_KEY)
+        .name("Visual Studio (XML) Reports Paths")
+        .description("Example: \"report.coveragexml\", \"report1.coveragexml,report2.coveragexml\" or \"C:/report.coveragexml\"")
+        .category(CATEGORY)
+        .subCategory(SUBCATEGORY)
+        .onlyOnQualifiers(Qualifiers.PROJECT, Qualifiers.MODULE)
         .build());
   }
 
-  public static class CSharpCoverageParserFactory extends CoverageAggregator {
+  public static class CSharpCoverageAggregator extends CoverageAggregator {
 
-    public CSharpCoverageParserFactory(Settings settings) {
+    public CSharpCoverageAggregator(Settings settings) {
       super(COVERAGE_CONF, settings);
     }
 
@@ -82,8 +94,8 @@ public class CSharpCodeCoverageProvider {
 
   public static class CSharpCoverageReportImportSensor extends CoverageReportImportSensor {
 
-    public CSharpCoverageReportImportSensor(CSharpCoverageParserFactory coverageProviderFactory) {
-      super(COVERAGE_CONF, coverageProviderFactory);
+    public CSharpCoverageReportImportSensor(CSharpCoverageAggregator coverageAggregator) {
+      super(COVERAGE_CONF, coverageAggregator);
     }
 
   }

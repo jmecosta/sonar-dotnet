@@ -8,13 +8,19 @@
     <version>3.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.codehaus.sonar-plugins.dotnet.csharp</groupId>
   <artifactId>sonar-csharp-plugin</artifactId>
   <packaging>sonar-plugin</packaging>
 
   <name>Sonar C# Plugin :: Core</name>
   <description>Enable analysis and reporting on C# projects.</description>
   <url>http://docs.codehaus.org/display/SONAR/C%23+Ecosystem</url>
+
+  <scm>
+    <connection>scm:git:git@github.com:SonarCommunity/sonar-csharp.git</connection>
+    <developerConnection>scm:git:git@github.com:SonarCommunity/sonar-csharp.git</developerConnection>
+    <url>https://github.com/SonarCommunity/sonar-csharp</url>
+    <tag>HEAD</tag>
+  </scm>
 
   <properties>
     <sonar.pluginName>C#</sonar.pluginName>
@@ -123,8 +129,8 @@
             <configuration>
               <rules>
                 <requireFilesSize>
-                  <maxsize>910000</maxsize>
-                  <minsize>700000</minsize>
+                  <maxsize>1000000</maxsize>
+                  <minsize>800000</minsize>
                   <files>
                     <file>${project.build.directory}/${project.build.finalName}.jar</file>
                   </files>

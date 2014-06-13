@@ -20,69 +20,48 @@
 package org.sonar.plugins.csharp.core;
 
 import com.google.common.collect.ImmutableList;
-import org.sonar.api.Properties;
-import org.sonar.api.Property;
-import org.sonar.api.PropertyType;
-import org.sonar.api.SonarPlugin;
+import org.junit.Test;
+import org.sonar.api.config.PropertyDefinition;
 import org.sonar.plugins.csharp.api.CSharp;
-import org.sonar.plugins.csharp.api.CSharpConstants;
 import org.sonar.plugins.csharp.squid.CSharpRuleProfile;
 import org.sonar.plugins.csharp.squid.CSharpRuleRepository;
-import org.sonar.plugins.csharp.squid.CSharpSquidConstants;
 import org.sonar.plugins.csharp.squid.CSharpSquidSensor;
 import org.sonar.plugins.csharp.squid.colorizer.CSharpSourceCodeColorizer;
 import org.sonar.plugins.csharp.squid.cpd.CSharpCPDMapping;
 
 import java.util.List;
 
-@Properties({
-  @Property(
-    key = CSharpConstants.FILE_SUFFIXES_KEY,
-    defaultValue = CSharpConstants.FILE_SUFFIXES_DEFVALUE,
-    name = "File suffixes",
-    description = "Comma-separated list of suffixes of files to analyze.",
-    project = true, global = true
-  ),
-  @Property(
-    key = CSharpSquidConstants.IGNORE_HEADER_COMMENTS,
-    defaultValue = "true",
-    name = "Ignore header comments",
-    description = "If set to \"true\", the file headers (that are usually the same on each file: " +
-      "licensing information for example) are not considered as comments. Thus metrics such as \"Comment lines\" " +
-      "do not get incremented. If set to \"false\", those file headers are considered as comments and metrics such as " +
-      "\"Comment lines\" get incremented.",
-    project = true, global = true,
-    type = PropertyType.BOOLEAN)
-})
-public class CSharpCorePlugin extends SonarPlugin {
+import static org.fest.assertions.Assertions.assertThat;
 
-  @Override
-  public List getExtensions() {
-    ImmutableList.Builder builder = ImmutableList.builder();
+public class CSharpCorePluginTest {
 
-    builder.add(
+  @Test
+  public void getExtensions() {
+    assertThat(nonProperties(new CSharpCorePlugin().getExtensions())).contains(
       CSharp.class,
-
-      // Sensors
       CSharpSourceImporter.class,
-
-      // Common Rules
       CSharpCommonRulesEngine.class,
       CSharpCommonRulesDecorator.class,
-
-      // C# Squid
       CSharpCPDMapping.class,
       CSharpSourceCodeColorizer.class,
       CSharpSquidSensor.class,
-
-      // rules
       CSharpRuleRepository.class,
       CSharpRuleProfile.class);
 
-    builder.addAll(CSharpFxCopProvider.extensions());
-    builder.addAll(CSharpCodeCoverageProvider.extensions());
-    builder.addAll(CSharpUnitTestResultsProvider.extensions());
+    assertThat(new CSharpCorePlugin().getExtensions()).hasSize(
+      9
+        + CSharpFxCopProvider.extensions().size()
+        + CSharpCodeCoverageProvider.extensions().size()
+        + CSharpUnitTestResultsProvider.extensions().size());
+  }
 
+  private static List nonProperties(List extensions) {
+    ImmutableList.Builder builder = ImmutableList.builder();
+    for (Object extension : extensions) {
+      if (!(extension instanceof PropertyDefinition)) {
+        builder.add(extension);
+      }
+    }
     return builder.build();
   }
 
