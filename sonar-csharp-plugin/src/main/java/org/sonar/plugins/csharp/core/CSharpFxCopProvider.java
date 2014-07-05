@@ -44,7 +44,7 @@ public class CSharpFxCopProvider {
   private static final String FXCOP_DIRECTORY_PROPERTY_KEY = "sonar.cs.fxcop.directory";
   private static final String FXCOP_FXCOPCMD_PATH_PROPERTY_KEY = "sonar.cs.fxcop.fxCopCmdPath";
   private static final String FXCOP_TIMEOUT_PROPERTY_KEY = "sonar.cs.fxcop.timeoutMinutes";
-  private static final String FXCOP_CUSTOM_RULES_PROPERTY_KEY = "sonar.cs.fxcop.customRules";
+  private static final String FXCOP_ASPNET_PROPERTY_KEY = "sonar.cs.fxcop.aspnet";
 
   private static final FxCopConfiguration FXCOP_CONF = new FxCopConfiguration(
     CSharpConstants.LANGUAGE_KEY,
@@ -52,7 +52,8 @@ public class CSharpFxCopProvider {
     FXCOP_ASSEMBLIES_PROPERTY_KEY,
     FXCOP_DIRECTORY_PROPERTY_KEY,
     FXCOP_FXCOPCMD_PATH_PROPERTY_KEY,
-    FXCOP_TIMEOUT_PROPERTY_KEY);
+    FXCOP_TIMEOUT_PROPERTY_KEY,
+    FXCOP_ASPNET_PROPERTY_KEY);
 
   public static List extensions() {
     return ImmutableList.of(
@@ -90,13 +91,13 @@ public class CSharpFxCopProvider {
         .subCategory(SUBCATEGORY)
         .onQualifiers(Qualifiers.PROJECT, Qualifiers.MODULE)
         .build(),
-      PropertyDefinition.builder(FXCOP_CUSTOM_RULES_PROPERTY_KEY)
-        .name("FxCop custom rules")
-        .description("XML definitions of custom FxCop rules, which are'nt builtin into the plugin."
-                   + " The used format is described <a href='http://docs.codehaus.org/display/SONAR/C%23+Plugin'>here</a>.")
-        .type(PropertyType.TEXT)
-        .category(CATEGORY)              
+      PropertyDefinition.builder(FXCOP_ASPNET_PROPERTY_KEY)
+        .name("ASP.NET")
+        .description("Whether or not to set the /aspnet flag when launching FxCopCmd.exe")
+        .defaultValue("false")
+        .category(CATEGORY)
         .subCategory(SUBCATEGORY)
+        .onlyOnQualifiers(Qualifiers.PROJECT, Qualifiers.MODULE)
         .build()
       );
   }
