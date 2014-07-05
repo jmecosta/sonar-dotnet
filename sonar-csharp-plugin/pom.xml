@@ -53,6 +53,7 @@
     <dependency>
       <groupId>org.codehaus.sonar.dotnet.tests</groupId>
       <artifactId>sonar-dotnet-tests-library</artifactId>
+      <version>1.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -129,7 +130,7 @@
             <configuration>
               <rules>
                 <requireFilesSize>
-                  <maxsize>1000000</maxsize>
+                  <maxsize>2000000</maxsize>
                   <minsize>800000</minsize>
                   <files>
                     <file>${project.build.directory}/${project.build.finalName}.jar</file>

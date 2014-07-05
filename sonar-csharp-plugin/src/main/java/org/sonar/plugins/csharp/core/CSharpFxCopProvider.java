@@ -49,11 +49,11 @@ public class CSharpFxCopProvider {
   private static final FxCopConfiguration FXCOP_CONF = new FxCopConfiguration(
     CSharpConstants.LANGUAGE_KEY,
     "fxcop",
-    FXCOP_ASSEMBLIES_PROPERTY_KEY,
-    FXCOP_DIRECTORY_PROPERTY_KEY,
+    FXCOP_ASSEMBLIES_PROPERTY_KEY,    
     FXCOP_FXCOPCMD_PATH_PROPERTY_KEY,
     FXCOP_TIMEOUT_PROPERTY_KEY,
-    FXCOP_ASPNET_PROPERTY_KEY);
+    FXCOP_ASPNET_PROPERTY_KEY,
+    FXCOP_DIRECTORY_PROPERTY_KEY);
 
   public static List extensions() {
     return ImmutableList.of(
@@ -104,8 +104,8 @@ public class CSharpFxCopProvider {
 
   public static class CSharpFxCopRuleRepository extends FxCopRuleRepository {
 
-    public CSharpFxCopRuleRepository(XMLRuleParser xmlRuleParser, Settings settings) {
-      super(FXCOP_CONF, FXCOP_CUSTOM_RULES_PROPERTY_KEY, xmlRuleParser, settings);
+    public CSharpFxCopRuleRepository(XMLRuleParser xmlRuleParser) {
+      super(FXCOP_CONF, xmlRuleParser);
     }
 
   }

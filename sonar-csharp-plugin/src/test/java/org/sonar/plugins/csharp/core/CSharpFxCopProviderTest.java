@@ -43,7 +43,6 @@ public class CSharpFxCopProviderTest {
       "sonar.cs.fxcop.fxCopCmdPath",
       "sonar.cs.fxcop.directory",
       "sonar.cs.fxcop.aspnet");
-      "sonar.cs.fxcop.customRules");
   }
 
   private static Set<String> nonProperties(List extensions) {
