@@ -587,7 +587,7 @@
       </chc>
       <chc>
         <rule-repo>csharpsquid</rule-repo>
-        <rule-key>ClassName</rule-key>
+        <rule-key>ClassName2</rule-key>
         <prop>
           <key>remediationFunction</key>
           <txt>linear</txt>
@@ -623,7 +623,7 @@
       </chc>
       <chc>
         <rule-repo>csharpsquid</rule-repo>
-        <rule-key>MethodName</rule-key>
+        <rule-key>MethodName2</rule-key>
         <prop>
           <key>remediationFunction</key>
           <txt>linear</txt>
@@ -3088,24 +3088,6 @@
           <key>remediationFactor</key>
           <val>10.0</val>
           <txt>mn</txt>
-        </prop>
-        <prop>
-          <key>offset</key>
-          <val>0.0</val>
-          <txt>d</txt>
-        </prop>
-      </chc>
-      <chc>
-        <rule-repo>csharpsquid</rule-repo>
-        <rule-key>ClassCoupling</rule-key>
-        <prop>
-          <key>remediationFunction</key>
-          <txt>linear</txt>
-        </prop>
-        <prop>
-          <key>remediationFactor</key>
-          <val>3.0</val>
-          <txt>h</txt>
         </prop>
         <prop>
           <key>offset</key>

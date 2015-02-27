@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.codehaus.sonar-plugins.dotnet.csharp</groupId>
     <artifactId>sonar-csharp-squid</artifactId>
-    <version>3.3</version>
+    <version>3.4</version>
   </parent>
 
   <artifactId>sonar-csharp-plugin</artifactId>
@@ -13,36 +13,27 @@
 
   <name>Sonar C# Plugin :: Core</name>
   <description>Enable analysis and reporting on C# projects.</description>
-  <url>http://docs.codehaus.org/x/BIREDg</url>
+  <url>http://redirect.sonarsource.com/plugins/csharp.html</url>
 
   <scm>
     <connection>scm:git:git@github.com:SonarCommunity/sonar-csharp.git</connection>
     <developerConnection>scm:git:git@github.com:SonarCommunity/sonar-csharp.git</developerConnection>
     <url>https://github.com/SonarCommunity/sonar-csharp</url>
-    <tag>3.3</tag>
+    <tag>3.4</tag>
   </scm>
 
   <properties>
     <sonar.pluginName>C#</sonar.pluginName>
-    <sonar.pluginClass>org.sonar.plugins.csharp.core.CSharpCorePlugin</sonar.pluginClass>
+    <sonar.pluginClass>org.sonar.plugins.csharp.CSharpPlugin</sonar.pluginClass>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>csharp-squid</artifactId>
+      <artifactId>NSonarQubeAnalyzer</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>csharp-checks</artifactId>
-      <version>${project.version}</version>
+      <type>zip</type>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -57,16 +48,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.sonar.sslr</groupId>
-      <artifactId>sslr-core</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.codehaus.sonar.sslr-squid-bridge</groupId>
       <artifactId>sslr-squid-bridge</artifactId>
     </dependency>
@@ -75,7 +56,6 @@
       <artifactId>sonar-common-rules</artifactId>
     </dependency>
 
-    <!-- sonar open-source -->
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>
@@ -91,8 +71,12 @@
       <artifactId>sonar-deprecated</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-    <!-- Tests -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -101,11 +85,6 @@
     <dependency>
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -119,6 +98,31 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <stripVersion>true</stripVersion>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>NSonarQubeAnalyzer</artifactId>
+                  <version>${project.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
@@ -130,8 +134,8 @@
             <configuration>
               <rules>
                 <requireFilesSize>
-                  <maxsize>2000000</maxsize>
-                  <minsize>800000</minsize>
+                  <maxsize>6500000</maxsize>
+                  <minsize>5500000</minsize>
                   <files>
                     <file>${project.build.directory}/${project.build.finalName}.jar</file>
                   </files>

@@ -26,3 +26,35 @@ Icon?
 Thumbs.db
 # Folder config file
 Desktop.ini
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+x64/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# NuGet
+packages/
+
+# Roslyn
+*.sln.ide/
+
+# SonarQube
+.sonar/
+
+# MSTest test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Visual Studio profiler files
+*.psess
+*.vsp
