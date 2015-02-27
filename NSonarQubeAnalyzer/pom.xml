@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.codehaus.sonar-plugins.dotnet.csharp</groupId>
     <artifactId>sonar-csharp-squid</artifactId>
-    <version>3.4</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>NSonarQubeAnalyzer</artifactId>
@@ -27,7 +27,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${env.MSBUILD_PATH}</executable>
+              <executable>C:/Program Files (x86)/MSBuild/12.0/Bin/MSBuild.exe</executable>
               <workingDirectory>.</workingDirectory>
               <arguments>
                 <argument>/property:Configuration=Release</argument>
@@ -42,7 +42,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${env.NUGET_PATH}</executable>
+              <executable>c:/tekla/buildtools/nuget/nuget.exe</executable>
               <workingDirectory>.</workingDirectory>
               <arguments>
                 <argument>restore</argument>
@@ -56,7 +56,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${env.MSBUILD_PATH}</executable>
+              <executable>C:/Program Files (x86)/MSBuild/12.0/Bin/MSBuild.exe</executable>
               <workingDirectory>.</workingDirectory>
               <arguments>
                 <argument>/property:Configuration=Release</argument>
