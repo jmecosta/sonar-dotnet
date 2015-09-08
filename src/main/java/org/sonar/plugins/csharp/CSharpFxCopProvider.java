@@ -53,7 +53,7 @@ public class CSharpFxCopProvider {
   private static final FxCopConfiguration FXCOP_CONF = new FxCopConfiguration(
     CSharpPlugin.LANGUAGE_KEY,
     "fxcop",
-    FXCOP_ASSEMBLIES_PROPERTY_KEY,
+    FXCOP_ASSEMBLIES_PROPERTY_KEY,    
     FXCOP_FXCOPCMD_PATH_PROPERTY_KEY,
     FXCOP_TIMEOUT_PROPERTY_KEY,
     FXCOP_ASPNET_PROPERTY_KEY,
@@ -148,3 +148,4 @@ public class CSharpFxCopProvider {
   }
 
 }
+
