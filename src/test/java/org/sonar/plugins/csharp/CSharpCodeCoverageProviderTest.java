@@ -19,14 +19,13 @@
  */
 package org.sonar.plugins.csharp;
 
-import org.sonar.plugins.csharp.CSharpCodeCoverageProvider;
-import org.sonar.plugins.csharp.CSharpCodeCoverageProvider.CSharpCoverageAggregator;
-import org.sonar.plugins.csharp.CSharpCodeCoverageProvider.CSharpCoverageReportImportSensor;
-
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import org.sonar.api.config.PropertyDefinition;
+import org.sonar.plugins.csharp.CSharpCodeCoverageProvider.CSharpCoverageAggregator;
+import org.sonar.plugins.csharp.CSharpCodeCoverageProvider.CSharpCoverageReportImportSensor;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +43,14 @@ public class CSharpCodeCoverageProviderTest {
       "sonar.cs.opencover.reportsPaths",
       "sonar.cs.dotcover.reportsPaths",
       "sonar.cs.vscoveragexml.reportsPaths");
+  }
+
+  @Test
+  public void for_coverage() throws Exception {
+    Constructor<CSharpCodeCoverageProvider> constructor = CSharpCodeCoverageProvider.class.getDeclaredConstructor();
+    assertThat(constructor.isAccessible()).isFalse();
+    constructor.setAccessible(true);
+    constructor.newInstance();
   }
 
   private static Set<String> nonProperties(List extensions) {
