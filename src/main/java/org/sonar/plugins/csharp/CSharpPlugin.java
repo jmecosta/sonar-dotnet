@@ -74,7 +74,10 @@ public class CSharpPlugin extends SonarPlugin {
       CSharpSourceCodeColorizer.class,
       RuleRunnerExtractor.class,
       CSharpSensor.class,
-      CSharpCPDMapping.class);
+      CSharpCPDMapping.class,
+      SonarLintProfileExporter.class,
+      SonarLintParameterProfileExporter.class,
+      SonarLintFakeProfileImporter.class);
 
     builder.addAll(CSharpFxCopProvider.extensions());
     builder.addAll(CSharpCodeCoverageProvider.extensions());

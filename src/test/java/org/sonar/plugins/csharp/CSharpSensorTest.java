@@ -60,6 +60,9 @@ import static org.mockito.Mockito.when;
 public class CSharpSensorTest {
 
   private SensorContext context;
+  private Project project;
+  private CSharpSensor sensor;
+  private Settings settings;
   private DefaultInputFile inputFile;
   private DefaultFileSystem fs;
   private FileLinesContext fileLinesContext;
@@ -68,8 +71,12 @@ public class CSharpSensorTest {
   private NoSonarFilter noSonarFilter;
   private ResourcePerspectives perspectives;
   private Issuable issuable;
-  private IssueBuilder issueBuilder;
-  private Issue issue;
+  private IssueBuilder issueBuilder1;
+  private IssueBuilder issueBuilder2;
+  private IssueBuilder issueBuilder3;
+  private Issue issue1;
+  private Issue issue2;
+  private Issue issue3;
 
   @Test
   public void shouldExecuteOnProject() {
@@ -111,10 +118,16 @@ public class CSharpSensorTest {
     noSonarFilter = mock(NoSonarFilter.class);
     perspectives = mock(ResourcePerspectives.class);
     issuable = mock(Issuable.class);
-    issueBuilder = mock(IssueBuilder.class);
-    when(issuable.newIssueBuilder()).thenReturn(issueBuilder);
-    issue = mock(Issue.class);
-    when(issueBuilder.build()).thenReturn(issue);
+    issueBuilder1 = mock(IssueBuilder.class);
+    issueBuilder2 = mock(IssueBuilder.class);
+    issueBuilder3 = mock(IssueBuilder.class);
+    when(issuable.newIssueBuilder()).thenReturn(issueBuilder1, issueBuilder2, issueBuilder3);
+    issue1 = mock(Issue.class);
+    when(issueBuilder1.build()).thenReturn(issue1);
+    issue2 = mock(Issue.class);
+    when(issueBuilder2.build()).thenReturn(issue2);
+    issue3 = mock(Issue.class);
+    when(issueBuilder3.build()).thenReturn(issue3);
     when(perspectives.as(Mockito.eq(Issuable.class), Mockito.any(InputFile.class))).thenReturn(issuable);
 
     ActiveRule templateActiveRule = mock(ActiveRule.class);
@@ -144,18 +157,21 @@ public class CSharpSensorTest {
     RulesProfile rulesProfile = mock(RulesProfile.class);
     when(rulesProfile.getActiveRulesByRepository("csharpsquid")).thenReturn(ImmutableList.of(templateActiveRule, parametersActiveRule));
 
-    CSharpSensor sensor =
+    settings = mock(Settings.class);
+    sensor =
       new CSharpSensor(
-        mock(Settings.class), extractor,
+        settings, extractor,
         fs,
         fileLinesContextFactory, noSonarFilter, rulesProfile, perspectives);
 
+    project = mock(Project.class);
     context = mock(SensorContext.class);
-    sensor.analyse(mock(Project.class), context);
   }
 
   @Test
   public void metrics() {
+    sensor.analyse(project, context);
+
     verify(context).saveMeasure(inputFile, CoreMetrics.LINES, 27d);
     verify(context).saveMeasure(inputFile, CoreMetrics.CLASSES, 1d);
     verify(context).saveMeasure(inputFile, CoreMetrics.ACCESSORS, 5d);
@@ -168,6 +184,8 @@ public class CSharpSensorTest {
 
   @Test
   public void distribution() {
+    sensor.analyse(project, context);
+
     ArgumentCaptor<Measure> captor = ArgumentCaptor.forClass(Measure.class);
     verify(context, Mockito.times(2)).saveMeasure(Mockito.eq(inputFile), captor.capture());
     int i = 0;
@@ -185,12 +203,16 @@ public class CSharpSensorTest {
 
   @Test
   public void commentsAndNoSonar() {
+    sensor.analyse(project, context);
+
     verify(noSonarFilter).addComponent(inputFile.key(), ImmutableSet.of(8));
     verify(context).saveMeasure(inputFile, CoreMetrics.COMMENT_LINES, 2d);
   }
 
   @Test
   public void devCockpit() {
+    sensor.analyse(project, context);
+
     verify(fileLinesContext).setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, 3, 1);
     verify(fileLinesContext).setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, 7, 1);
 
@@ -201,18 +223,56 @@ public class CSharpSensorTest {
 
   @Test
   public void issue() {
-    verify(issueBuilder).ruleKey(RuleKey.of(CSharpPlugin.REPOSITORY_KEY, "S1186"));
-    verify(issueBuilder).message("Add a nested comment explaining why this method is empty, throw an NotSupportedException or complete the implementation.");
-    verify(issueBuilder).line(16);
-    verify(issuable).addIssue(issue);
+    sensor.analyse(project, context);
+
+    verify(issueBuilder1).ruleKey(RuleKey.of(CSharpPlugin.REPOSITORY_KEY, "S1186"));
+    verify(issueBuilder1).message("Add a nested comment explaining why this method is empty, throw an NotSupportedException or complete the implementation.");
+    verify(issueBuilder1).line(16);
+    verify(issuable).addIssue(issue1);
   }
 
   @Test
-  public void produced_analysis_input() throws Exception {
+  public void escapesAnalysisInput() throws Exception {
+    sensor.analyse(project, context);
+
     assertThat(
       Files.toString(new File("src/test/resources/CSharpSensorTest/analysis-input.xml"), Charsets.UTF_8).replaceAll("\r?\n|\r", "")
         .replaceAll("<File>.*?Foo&amp;Bar.cs</File>", "<File>Foo&amp;Bar.cs</File>"))
       .isEqualTo(Files.toString(new File("src/test/resources/CSharpSensorTest/analysis-input-expected.xml"), Charsets.UTF_8).replaceAll("\r?\n|\r", ""));
+  }
+
+  @Test
+  public void roslynReportIsProcessed() {
+    when(settings.getString("sonar.cs.roslyn.reportFilePath")).thenReturn(new File("src/test/resources/CSharpSensorTest/roslyn-report.json").getAbsolutePath());
+    sensor.analyse(project, context);
+
+    // We use a mocked rule runner which will report an issue even if a Roslyn report is provided
+    verify(issueBuilder1).ruleKey(RuleKey.of(CSharpPlugin.REPOSITORY_KEY, "S1186"));
+    verify(issueBuilder1).message("Add a nested comment explaining why this method is empty, throw an NotSupportedException or complete the implementation.");
+    verify(issueBuilder1).line(16);
+
+    verify(issueBuilder2).ruleKey(RuleKey.of(CSharpPlugin.REPOSITORY_KEY, "[parameters_key]"));
+    verify(issueBuilder2).message("Short messages should be used first in Roslyn reports");
+    verify(issueBuilder2).line(42);
+
+    verify(issueBuilder3).ruleKey(RuleKey.of(CSharpPlugin.REPOSITORY_KEY, "[parameters_key]"));
+    verify(issueBuilder3).message("There only is a full message in the Roslyn report");
+    verify(issueBuilder3).line(100);
+
+    verify(issuable).addIssue(issue1);
+    verify(issuable).addIssue(issue2);
+    verify(issuable).addIssue(issue3);
+  }
+
+  @Test
+  public void roslynRulesNotExecutedTwice() throws Exception {
+    when(settings.getString("sonar.cs.roslyn.reportFilePath")).thenReturn(new File("src/test/resources/CSharpSensorTest/roslyn-report.json").getAbsolutePath());
+    sensor.analyse(project, context);
+
+    assertThat(
+      Files.toString(new File("src/test/resources/CSharpSensorTest/analysis-input.xml"), Charsets.UTF_8).replaceAll("\r?\n|\r", "")
+        .replaceAll("<File>.*?Foo&amp;Bar.cs</File>", "<File>Foo&amp;Bar.cs</File>"))
+      .isEqualTo(Files.toString(new File("src/test/resources/CSharpSensorTest/analysis-input-expected-with-roslyn.xml"), Charsets.UTF_8).replaceAll("\r?\n|\r", ""));
   }
 
 }
