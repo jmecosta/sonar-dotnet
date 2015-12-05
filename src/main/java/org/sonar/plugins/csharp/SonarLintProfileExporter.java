@@ -43,20 +43,17 @@ public class SonarLintProfileExporter extends ProfileExporter {
   @Override
   public void exportProfile(RulesProfile ruleProfile, Writer writer) {
     Set<String> disabledRuleKeys = Sets.newHashSet();
-    disabledRuleKeys.addAll(csharpRulesDefinition.parameterlessRuleKeys());
+    disabledRuleKeys.addAll(csharpRulesDefinition.allRuleKeys());
 
     appendLine(writer, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     appendLine(writer, "<RuleSet Name=\"Rules for SonarLint\" Description=\"This rule set was automatically generated from SonarQube.\" ToolsVersion=\"14.0\">");
-    appendLine(writer, "  <Rules AnalyzerId=\"SonarLint\" RuleNamespace=\"SonarLint\">");
+    appendLine(writer, "  <Rules AnalyzerId=\"SonarLint.CSharp\" RuleNamespace=\"SonarLint.CSharp\">");
 
     for (ActiveRule activeRule : ruleProfile.getActiveRulesByRepository(CSharpPlugin.REPOSITORY_KEY)) {
       Rule rule = activeRule.getRule();
       disabledRuleKeys.remove(rule.getKey());
 
-      if (rule.getParams().isEmpty() && rule.getTemplate() == null && !activeRule.getSeverity().equals(rule.getSeverity())) {
-        // Rule is from SonarLint and severity is non-default, explicitly enable
-        appendLine(writer, "    <Rule Id=\"" + rule.getKey() + "\" Action=\"Warning\" />");
-      }
+      appendLine(writer, "    <Rule Id=\"" + rule.getKey() + "\" Action=\"Warning\" />");
     }
 
     for (String disableRuleKey : disabledRuleKeys) {
