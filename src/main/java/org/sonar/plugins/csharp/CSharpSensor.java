@@ -1,7 +1,7 @@
 /*
  * SonarQube C# Plugin
- * Copyright (C) 2014 SonarSource
- * sonarqube@googlegroups.com
+ * Copyright (C) 2014-2016 SonarSource SA
+ * mailto:contact AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,9 +13,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package org.sonar.plugins.csharp;
 
@@ -241,25 +241,28 @@ public class CSharpSensor implements Sensor {
     }
 
     JsonParser parser = new JsonParser();
-    for (JsonElement issueElement : parser.parse(contents).getAsJsonObject().get("issues").getAsJsonArray()) {
-      JsonObject issue = issueElement.getAsJsonObject();
+    JsonElement issues = parser.parse(contents).getAsJsonObject().get("issues");
+    if (issues != null) {
+      for (JsonElement issueElement : issues.getAsJsonArray()) {
+        JsonObject issue = issueElement.getAsJsonObject();
 
-      String ruleId = issue.get("ruleId").getAsString();
-      if (!activeRuleIds.contains(ruleId)) {
-        continue;
-      }
+        String ruleId = issue.get("ruleId").getAsString();
+        if (!activeRuleIds.contains(ruleId)) {
+          continue;
+        }
 
-      String message = issue.get(issue.has("shortMessage") ? "shortMessage" : "fullMessage").getAsString();
-      for (JsonElement locationElement : issue.get("locations").getAsJsonArray()) {
-        JsonObject location = locationElement.getAsJsonObject();
-        if (location.has("analysisTarget")) {
-          for (JsonElement analysisTargetElement : location.get("analysisTarget").getAsJsonArray()) {
-            JsonObject analysisTarget = analysisTargetElement.getAsJsonObject();
-            String uri = analysisTarget.get("uri").getAsString();
-            JsonObject region = analysisTarget.get("region").getAsJsonObject();
-            int startLine = region.get("startLine").getAsInt();
+        String message = issue.get(issue.has("shortMessage") ? "shortMessage" : "fullMessage").getAsString();
+        for (JsonElement locationElement : issue.get("locations").getAsJsonArray()) {
+          JsonObject location = locationElement.getAsJsonObject();
+          if (location.has("analysisTarget")) {
+            for (JsonElement analysisTargetElement : location.get("analysisTarget").getAsJsonArray()) {
+              JsonObject analysisTarget = analysisTargetElement.getAsJsonObject();
+              String uri = analysisTarget.get("uri").getAsString();
+              JsonObject region = analysisTarget.get("region").getAsJsonObject();
+              int startLine = region.get("startLine").getAsInt();
 
-            handleRoslynIssue(ruleId, uri, startLine, message);
+              handleRoslynIssue(ruleId, uri, startLine, message);
+            }
           }
         }
       }

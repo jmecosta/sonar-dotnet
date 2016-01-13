@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.sonarsource.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>24</version>
+    <version>25</version>
   </parent>
 
   <groupId>org.sonarsource.dotnet</groupId>
   <artifactId>sonar-csharp-plugin</artifactId>
   <packaging>sonar-plugin</packaging>
-  <version>4.4-SNAPSHOT</version>
+  <version>4.5-SNAPSHOT</version>
 
   <name>SonarQube C# Plugin</name>
   <description>Enables scanning of C# source files</description>

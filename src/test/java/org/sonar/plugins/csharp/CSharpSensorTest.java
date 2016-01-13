@@ -1,7 +1,7 @@
 /*
  * SonarQube C# Plugin
- * Copyright (C) 2014 SonarSource
- * sonarqube@googlegroups.com
+ * Copyright (C) 2014-2016 SonarSource SA
+ * mailto:contact AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,9 +13,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package org.sonar.plugins.csharp;
 
@@ -273,6 +273,12 @@ public class CSharpSensorTest {
       Files.toString(new File("src/test/resources/CSharpSensorTest/SonarLint.xml"), Charsets.UTF_8).replaceAll("\r?\n|\r", "")
         .replaceAll("<File>.*?Foo&amp;Bar.cs</File>", "<File>Foo&amp;Bar.cs</File>"))
       .isEqualTo(Files.toString(new File("src/test/resources/CSharpSensorTest/SonarLint-expected-with-roslyn.xml"), Charsets.UTF_8).replaceAll("\r?\n|\r", ""));
+  }
+
+  @Test
+  public void roslynEmptyReportShouldNotFail() {
+    when(settings.getString("sonar.cs.roslyn.reportFilePath")).thenReturn(new File("src/test/resources/CSharpSensorTest/roslyn-report-empty.json").getAbsolutePath());
+    sensor.analyse(project, context);
   }
 
 }
