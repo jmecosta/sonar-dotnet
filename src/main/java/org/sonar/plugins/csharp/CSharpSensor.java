@@ -23,14 +23,23 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.Map.Entry;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Sensor;
@@ -51,6 +60,7 @@ import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.PersistenceMode;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.ActiveRuleParam;
@@ -59,19 +69,6 @@ import org.sonar.api.rules.RuleParam;
 import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.command.CommandExecutor;
 import org.sonar.api.utils.command.StreamConsumer;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 public class CSharpSensor implements Sensor {
 
@@ -112,7 +109,7 @@ public class CSharpSensor implements Sensor {
     importResults(project, context);
 
     if (hasRoslynReportPath) {
-      importRoslynReport(roslynReportPath);
+      importRoslynReport(roslynReportPath, perspectives.as(Issuable.class, (Resource)project));
     }
   }
 
@@ -122,6 +119,11 @@ public class CSharpSensor implements Sensor {
       LOG.warn("*                Use MSBuild 14 to get the best analysis results                 *");
       LOG.warn("* The use of MSBuild 12 or the sonar-runner to analyze C# projects is DEPRECATED *");
       LOG.warn("**********************************************************************************");
+
+      ImmutableMultimap<String, ActiveRule> activeRoslynRulesByPartialRepoKey = RoslynProfileExporter.activeRoslynRulesByPartialRepoKey(ruleProfile.getActiveRules());
+      if (activeRoslynRulesByPartialRepoKey.keySet().size() > 1) {
+        throw new IllegalArgumentException("Custom and 3rd party Roslyn analyzers are only by MSBuild 14. Either use MSBuild 14, or disable the custom/3rd party Roslyn analyzers in your quality profile.");
+      }
     }
 
     String analysisSettings = analysisSettings(true, settings.getBoolean("sonar.cs.ignoreHeaderComments"), includeRules, ruleProfile, filesToAnalyze());
@@ -224,10 +226,10 @@ public class CSharpSensor implements Sensor {
   private void importResults(Project project, SensorContext context) {
     File analysisOutput = toolOutput();
 
-    new AnalysisResultImporter(project, context, fs, fileLinesContextFactory, noSonarFilter, perspectives).parse(analysisOutput);
+    new AnalysisResultImporter(context, fs, fileLinesContextFactory, noSonarFilter, perspectives).parse(analysisOutput);
   }
 
-  private void importRoslynReport(String reportPath) {
+  private void importRoslynReport(String reportPath, Issuable projectIssuable) {
     String contents;
     try {
       contents = Files.toString(new File(reportPath), Charsets.UTF_8);
@@ -235,9 +237,15 @@ public class CSharpSensor implements Sensor {
       throw Throwables.propagate(e);
     }
 
-    Set<String> activeRuleIds = Sets.newHashSet();
-    for (ActiveRule activeRule : ruleProfile.getActiveRulesByRepository(CSharpPlugin.REPOSITORY_KEY)) {
-      activeRuleIds.add(activeRule.getRuleKey());
+    ImmutableMultimap<String, ActiveRule> activeRoslynRulesByPartialRepoKey = RoslynProfileExporter.activeRoslynRulesByPartialRepoKey(ruleProfile.getActiveRules());
+    Map<String, String> repositoryKeyByRoslynRuleKey = Maps.newHashMap();
+    for (ActiveRule activeRoslynRule: activeRoslynRulesByPartialRepoKey.values()) {
+      String previousRepositoryKey = repositoryKeyByRoslynRuleKey.put(activeRoslynRule.getRuleKey(), activeRoslynRule.getRepositoryKey());
+      if (previousRepositoryKey != null) {
+        throw new IllegalArgumentException("Rule keys must be unique, but \"" + activeRoslynRule.getRuleKey() +
+          "\" is defined in both the \"" + previousRepositoryKey + "\" and \"" + activeRoslynRule.getRepositoryKey() +
+          "\" rule repositories.");
+      }
     }
 
     JsonParser parser = new JsonParser();
@@ -247,40 +255,52 @@ public class CSharpSensor implements Sensor {
         JsonObject issue = issueElement.getAsJsonObject();
 
         String ruleId = issue.get("ruleId").getAsString();
-        if (!activeRuleIds.contains(ruleId)) {
+        if (!repositoryKeyByRoslynRuleKey.containsKey(ruleId)) {
           continue;
         }
 
         String message = issue.get(issue.has("shortMessage") ? "shortMessage" : "fullMessage").getAsString();
+        boolean hasLocation = false;
         for (JsonElement locationElement : issue.get("locations").getAsJsonArray()) {
           JsonObject location = locationElement.getAsJsonObject();
           if (location.has("analysisTarget")) {
             for (JsonElement analysisTargetElement : location.get("analysisTarget").getAsJsonArray()) {
+              hasLocation = true;
               JsonObject analysisTarget = analysisTargetElement.getAsJsonObject();
               String uri = analysisTarget.get("uri").getAsString();
               JsonObject region = analysisTarget.get("region").getAsJsonObject();
               int startLine = region.get("startLine").getAsInt();
 
-              handleRoslynIssue(ruleId, uri, startLine, message);
+              handleRoslynIssue(repositoryKeyByRoslynRuleKey.get(ruleId), ruleId, uri, startLine, message);
             }
           }
+        }
+        if (!hasLocation && projectIssuable != null) {
+          handleRoslynProjectIssue(projectIssuable, repositoryKeyByRoslynRuleKey.get(ruleId), ruleId, message);
         }
       }
     }
   }
 
-  private void handleRoslynIssue(String ruleId, String uri, int startLine, String fullMessage) {
+  private void handleRoslynIssue(String repositoryKey, String ruleId, String uri, int startLine, String fullMessage) {
     InputFile inputFile = fs.inputFile(fs.predicates().hasAbsolutePath(uri));
     if (inputFile != null) {
       Issuable issuable = perspectives.as(Issuable.class, inputFile);
       if (issuable != null) {
         IssueBuilder builder = issuable.newIssueBuilder();
-        builder.ruleKey(RuleKey.of(CSharpPlugin.REPOSITORY_KEY, ruleId));
+        builder.ruleKey(RuleKey.of(repositoryKey, ruleId));
         builder.line(startLine + 1);
         builder.message(fullMessage);
         issuable.addIssue(builder.build());
       }
     }
+  }
+
+  private static void handleRoslynProjectIssue(Issuable projectIssuable, String repositoryKey, String ruleId, String fullMessage) {
+    IssueBuilder builder = projectIssuable.newIssueBuilder();
+    builder.ruleKey(RuleKey.of(repositoryKey, ruleId));
+    builder.message(fullMessage);
+    projectIssuable.addIssue(builder.build());
   }
 
   private static class AnalysisResultImporter {
@@ -292,7 +312,7 @@ public class CSharpSensor implements Sensor {
     private final NoSonarFilter noSonarFilter;
     private final ResourcePerspectives perspectives;
 
-    public AnalysisResultImporter(Project project, SensorContext context, FileSystem fs, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter,
+    public AnalysisResultImporter(SensorContext context, FileSystem fs, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter,
       ResourcePerspectives perspectives) {
       this.context = context;
       this.fs = fs;
@@ -302,11 +322,9 @@ public class CSharpSensor implements Sensor {
     }
 
     public void parse(File file) {
-      InputStreamReader reader = null;
       XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
 
-      try {
-        reader = new InputStreamReader(new FileInputStream(file), Charsets.UTF_8);
+      try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), Charsets.UTF_8)) {
         stream = xmlFactory.createXMLStreamReader(reader);
 
         while (stream.hasNext()) {
@@ -318,13 +336,10 @@ public class CSharpSensor implements Sensor {
             }
           }
         }
-      } catch (IOException e) {
-        throw Throwables.propagate(e);
-      } catch (XMLStreamException e) {
+      } catch (XMLStreamException | IOException e) {
         throw Throwables.propagate(e);
       } finally {
         closeXmlStream();
-        Closeables.closeQuietly(reader);
       }
 
       return;

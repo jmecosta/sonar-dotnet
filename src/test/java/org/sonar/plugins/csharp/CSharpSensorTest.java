@@ -22,9 +22,13 @@ package org.sonar.plugins.csharp;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import java.io.File;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.sonar.api.batch.SensorContext;
@@ -44,13 +48,12 @@ import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.ActiveRuleParam;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
-
-import java.io.File;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -58,6 +61,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CSharpSensorTest {
+
+  @org.junit.Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   private SensorContext context;
   private Project project;
@@ -71,12 +77,20 @@ public class CSharpSensorTest {
   private NoSonarFilter noSonarFilter;
   private ResourcePerspectives perspectives;
   private Issuable issuable;
+  private Issuable projectIssuable;
   private IssueBuilder issueBuilder1;
   private IssueBuilder issueBuilder2;
   private IssueBuilder issueBuilder3;
+  private IssueBuilder issueBuilder4;
+  private IssueBuilder issueBuilder5;
   private Issue issue1;
   private Issue issue2;
   private Issue issue3;
+  private Issue issue4;
+  private Issue issue5;
+  private ActiveRule parametersActiveRule;
+  private ActiveRule customRoslynActiveRule;
+  private List<ActiveRule> allEnabledRules = Lists.newArrayList();
 
   @Test
   public void shouldExecuteOnProject() {
@@ -121,25 +135,37 @@ public class CSharpSensorTest {
     issueBuilder1 = mock(IssueBuilder.class);
     issueBuilder2 = mock(IssueBuilder.class);
     issueBuilder3 = mock(IssueBuilder.class);
-    when(issuable.newIssueBuilder()).thenReturn(issueBuilder1, issueBuilder2, issueBuilder3);
+    issueBuilder4 = mock(IssueBuilder.class);
+    issueBuilder5 = mock(IssueBuilder.class);
+    when(issuable.newIssueBuilder()).thenReturn(issueBuilder1, issueBuilder2, issueBuilder3, issueBuilder4);
     issue1 = mock(Issue.class);
     when(issueBuilder1.build()).thenReturn(issue1);
     issue2 = mock(Issue.class);
     when(issueBuilder2.build()).thenReturn(issue2);
     issue3 = mock(Issue.class);
     when(issueBuilder3.build()).thenReturn(issue3);
+    issue4 = mock(Issue.class);
+    when(issueBuilder4.build()).thenReturn(issue4);
     when(perspectives.as(Mockito.eq(Issuable.class), Mockito.any(InputFile.class))).thenReturn(issuable);
+    issue5 = mock(Issue.class);
+    when(issueBuilder5.build()).thenReturn(issue5);
+    projectIssuable = mock(Issuable.class);
+    when(projectIssuable.newIssueBuilder()).thenReturn(issueBuilder5);
+    when(perspectives.as(Mockito.eq(Issuable.class), Mockito.any(Resource.class))).thenReturn(projectIssuable);
 
     ActiveRule templateActiveRule = mock(ActiveRule.class);
     when(templateActiveRule.getRuleKey()).thenReturn("[template_key\"'<>&]");
+    when(templateActiveRule.getRepositoryKey()).thenReturn("csharpsquid");
     Rule templateRule = mock(Rule.class);
     Rule baseTemplateRule = mock(Rule.class);
     when(baseTemplateRule.getKey()).thenReturn("[base_key]");
+    when(baseTemplateRule.getRepositoryKey()).thenReturn("csharpsquid");
     when(templateRule.getTemplate()).thenReturn(baseTemplateRule);
     when(templateActiveRule.getRule()).thenReturn(templateRule);
 
-    ActiveRule parametersActiveRule = mock(ActiveRule.class);
+    parametersActiveRule = mock(ActiveRule.class);
     when(parametersActiveRule.getRuleKey()).thenReturn("[parameters_key]");
+    when(parametersActiveRule.getRepositoryKey()).thenReturn("csharpsquid");
     ActiveRuleParam param1 = mock(ActiveRuleParam.class);
     when(param1.getKey()).thenReturn("[param1_key]");
     when(param1.getValue()).thenReturn("[param1_value]");
@@ -154,8 +180,15 @@ public class CSharpSensorTest {
     when(parametersRule.getParams()).thenReturn(ImmutableList.of(param1Default, param2Default));
     when(parametersActiveRule.getRule()).thenReturn(parametersRule);
 
+    customRoslynActiveRule = mock(ActiveRule.class);
+    when(customRoslynActiveRule.getRuleKey()).thenReturn("custom-roslyn");
+    when(customRoslynActiveRule.getRepositoryKey()).thenReturn("roslyn.foo");
+
     RulesProfile rulesProfile = mock(RulesProfile.class);
     when(rulesProfile.getActiveRulesByRepository("csharpsquid")).thenReturn(ImmutableList.of(templateActiveRule, parametersActiveRule));
+    allEnabledRules.add(templateActiveRule);
+    allEnabledRules.add(parametersActiveRule);
+    when(rulesProfile.getActiveRules()).thenReturn(allEnabledRules);
 
     settings = mock(Settings.class);
     sensor =
@@ -166,6 +199,10 @@ public class CSharpSensorTest {
 
     project = mock(Project.class);
     context = mock(SensorContext.class);
+  }
+
+  private void enableCustomRoslynRules() {
+    allEnabledRules.add(customRoslynActiveRule);
   }
 
   @Test
@@ -243,6 +280,8 @@ public class CSharpSensorTest {
 
   @Test
   public void roslynReportIsProcessed() {
+    enableCustomRoslynRules();
+
     when(settings.getString("sonar.cs.roslyn.reportFilePath")).thenReturn(new File("src/test/resources/CSharpSensorTest/roslyn-report.json").getAbsolutePath());
     sensor.analyse(project, context);
 
@@ -259,9 +298,19 @@ public class CSharpSensorTest {
     verify(issueBuilder3).message("There only is a full message in the Roslyn report");
     verify(issueBuilder3).line(1);
 
+    verify(issueBuilder4).ruleKey(RuleKey.of("roslyn.foo", "custom-roslyn"));
+    verify(issueBuilder4).message("Custom Roslyn analyzer message");
+    verify(issueBuilder4).line(93);
+
+    verify(issueBuilder5).ruleKey(RuleKey.of(CSharpPlugin.REPOSITORY_KEY, "[parameters_key]"));
+    verify(issueBuilder5).message("This is an assembly level Roslyn issue with no location");
+    verify(issueBuilder5, Mockito.never()).line(1);
+
     verify(issuable).addIssue(issue1);
     verify(issuable).addIssue(issue2);
     verify(issuable).addIssue(issue3);
+    verify(issuable).addIssue(issue4);
+    verify(projectIssuable).addIssue(issue5);
   }
 
   @Test
@@ -278,6 +327,29 @@ public class CSharpSensorTest {
   @Test
   public void roslynEmptyReportShouldNotFail() {
     when(settings.getString("sonar.cs.roslyn.reportFilePath")).thenReturn(new File("src/test/resources/CSharpSensorTest/roslyn-report-empty.json").getAbsolutePath());
+    sensor.analyse(project, context);
+  }
+
+  @Test
+  public void failWithDuplicateRuleKey() {
+    enableCustomRoslynRules();
+
+    String ruleKey = parametersActiveRule.getRuleKey();
+    when(customRoslynActiveRule.getRuleKey()).thenReturn(ruleKey);
+
+    when(settings.getString("sonar.cs.roslyn.reportFilePath")).thenReturn(new File("src/test/resources/CSharpSensorTest/roslyn-report.json").getAbsolutePath());
+
+    thrown.expectMessage("Rule keys must be unique, but \"[parameters_key]\" is defined in both the \"csharpsquid\" and \"roslyn.foo\" rule repositories.");
+
+    sensor.analyse(project, context);
+  }
+
+  @Test
+  public void failWithCustomRoslynRulesAndMSBuild12() {
+    enableCustomRoslynRules();
+    when(settings.getString("sonar.cs.roslyn.reportFilePath")).thenReturn(null);
+
+    thrown.expectMessage("Custom and 3rd party Roslyn analyzers are only by MSBuild 14. Either use MSBuild 14, or disable the custom/3rd party Roslyn analyzers in your quality profile.");
     sensor.analyse(project, context);
   }
 

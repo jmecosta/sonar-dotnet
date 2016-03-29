@@ -20,10 +20,9 @@
 package org.sonar.plugins.csharp;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.Test;
 import org.sonar.api.config.PropertyDefinition;
-
-import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -44,8 +43,8 @@ public class CSharpPluginTest {
       CSharpSensor.class,
       CSharpCPDMapping.class,
       SonarLintProfileExporter.class,
-      SonarLintParameterProfileExporter.class,
-      SonarLintFakeProfileImporter.class
+      SonarLintFakeProfileImporter.class,
+      RoslynProfileExporter.class
     };
 
     assertThat(nonProperties(extensions)).contains(expectedExtensions);
@@ -55,7 +54,8 @@ public class CSharpPluginTest {
         + CSharpFxCopProvider.extensions().size()
         + CSharpCodeCoverageProvider.extensions().size()
         + CSharpUnitTestResultsProvider.extensions().size()
-        + CSharpMsBuildIntegrationProvider.extensions().size());
+        + CSharpMsBuildIntegrationProvider.extensions().size()
+        + RoslynProfileExporter.sonarLintRepositoryProperties().size());
   }
 
   private static List nonProperties(List extensions) {
