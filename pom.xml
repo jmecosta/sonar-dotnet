@@ -11,7 +11,7 @@
   <groupId>org.sonarsource.dotnet</groupId>
   <artifactId>sonar-csharp-plugin</artifactId>
   <packaging>sonar-plugin</packaging>
-  <version>4.5</version>
+  <version>5.1-SNAPSHOT</version>
 
   <name>SonarQube C# Plugin</name>
   <description>Enables scanning of C# source files</description>
@@ -40,11 +40,11 @@
     <connection>scm:git:git@github.com:SonarSource/sonar-csharp.git</connection>
     <developerConnection>scm:git:git@github.com:SonarSource/sonar-csharp.git</developerConnection>
     <url>https://github.com/SonarSource/sonar-csharp</url>
-    <tag>4.5</tag>
+    <tag>HEAD</tag>
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/SONARCS</url>
+    <url>https://jira.sonarsource.com/browse/SONARCS</url>
   </issueManagement>
 
   <properties>
@@ -61,9 +61,9 @@
       <version>1.4-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.sonarsource.sonar-plugins.dotnet.tests</groupId>
+      <groupId>org.sonarsource.dotnet</groupId>
       <artifactId>sonar-dotnet-tests-library</artifactId>
-      <version>1.3.1-SNAPSHOT</version>
+      <version>1.4.1</version>
     </dependency>
 
     <dependency>
@@ -123,7 +123,6 @@
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -154,9 +153,9 @@
 
   <profiles>
     <profile>
-      <id>milestone</id>
+      <id>noVersionNumberInJar</id>
       <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
+        <finalName>${project.artifactId}</finalName>
       </build>
     </profile>
   </profiles>

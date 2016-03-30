@@ -113,6 +113,8 @@ CALLSTACK:$(Get-PSCallStack | Out-String)
     }
 }
 
+Build "SonarSource/sonar-dotnet-tests-library" "1.3.1"
+
 switch ($env:TEST)
 {
 	"CI"
@@ -125,7 +127,7 @@ switch ($env:TEST)
 	{
 		InstallAppveyorTools
 
-		mvn package "--batch-mode" "-Dsource.skip=true" "-Denforcer.skip=true" "-Danimal.sniffer.skip=true" "-Dmaven.test.skip=true"
+		mvn package "-PnoVersionNumberInJar" "--batch-mode" "-Dsource.skip=true" "-Denforcer.skip=true" "-Danimal.sniffer.skip=true" "-Dmaven.test.skip=true"
 		CheckLastExitCode
 
 		if ($env:SQ_VERSION -eq "DEV")
