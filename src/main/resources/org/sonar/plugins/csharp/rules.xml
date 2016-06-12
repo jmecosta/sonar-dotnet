@@ -176,7 +176,20 @@ doSomething(i == 42);  // Perhaps in fact the comparison operator was expected
 </pre>
 
 <h2>Exceptions</h2>
-Assignments inside lambda and delegate expressions are allowed.
+Assignments inside lambda and delegate expressions are allowed. Furthermore, the following two patterns are also accepted.
+<pre>
+while ((val = GetNewValue()) > 0)
+{
+...
+}
+</pre>
+<pre>
+private object myField;
+public object MyProperty
+{
+  get { return myField ?? (myField = new object()); }
+}
+</pre>
 
 <h2>See</h2>
 <ul>
@@ -184,6 +197,10 @@ Assignments inside lambda and delegate expressions are allowed.
     <li>MISRA C++:2008, 6-2-1 - Assignment operators shall not be used in sub-expressions</li>
     <li>MISRA C:2012, 13.4 - The result of an assignment operator should not be used</li>
     <li><a href="http://cwe.mitre.org/data/definitions/481.html">MITRE, CWE-481</a> - Assigning instead of Comparing</li>
+    <li><a href="https://www.securecoding.cert.org/confluence/x/nYFtAg">CERT, EXP45-C</a> - Do not perform assignments in selection statements</li>
+    <li><a href="https://www.securecoding.cert.org/confluence/x/1gCTAw">CERT, EXP51-J.</a> - Do not perform assignments in conditional expressions</li>
+    <li><a href="https://www.securecoding.cert.org/confluence/x/KQvhAg">CERT, EXP19-CPP.</a> - Do not perform assignments in conditional expressions</li>
+    <li><a href="https://www.securecoding.cert.org/confluence/x/KYIyAQ">CERT, MSC02-CPP.</a> - Avoid errors of omission</li>
 </ul>]]></description>
     <tag>suspicious</tag>
     <tag>cwe</tag>
@@ -281,10 +298,12 @@ class HttpPrinter
     <severity>CRITICAL</severity>
     <cardinality>SINGLE</cardinality>
     <description><![CDATA[<p>
-Using the same value on either side of a binary operator is almost always a mistake. In the case of logical operators, it is either a copy/paste error and therefore a bug, or it is simply wasted code, and should be simplified. In the case of bitwise operators and most binary mathematical operators, having the same value on both sides of an operator yields predictable results, and should be simplified.
+Using the same value on either side of a binary operator is almost always a mistake. In the case of logical operators, it is either a copy/paste error
+    and therefore a bug, or it is simply wasted code, and should be simplified. In the case of bitwise operators and most binary mathematical operators,
+    having the same value on both sides of an operator yields predictable results, and should be simplified.
 </p>
 <p>
-This rule ignores <code>*</code>, <code>+</code>, and <code>=</code>.
+This rule ignores <code>*</code>, <code>+</code>, <code>=</code>, <code>&lt;&lt;</code>, and <code>&gt;&gt;</code>.
 </p>
 
 <h2>Noncompliant Code Example</h2>
@@ -325,13 +344,6 @@ if ( a == b )
 
 int j = 1;
 int k = 0;
-</pre>
-
-<h2>Exceptions</h2>
-Left-shifting 1 onto 1 is common in the construction of bit masks, and is ignored.
-<pre>
-int i = 1 << 1; // Compliant
-int j = a << a; // Noncompliant
 </pre>
 
 <h2>See</h2>
@@ -583,32 +595,71 @@ string s = File.ReadAllText(fileName);
   </rule>
   <rule>
     <key>S101</key>
-    <name>Class names should comply with a naming convention</name>
+    <name>Types should be named in camel case</name>
     <severity>MINOR</severity>
     <cardinality>SINGLE</cardinality>
     <description><![CDATA[<p>
-Sharing some naming conventions is a key point to make it possible for a team to efficiently collaborate.
-This rule allows to check that all class names match a provided regular expression.
+    Shared naming conventions allow teams to collaborate efficiently. This rule checks whether or not type names are camel cased. To reduce noise, two consecutive
+    upper case characters are allowed unless they form the whole type name. So, <code>MyXClass</code> is compliant, but <code>XC</code> on its own is not.
 </p>
 
 <h2>Noncompliant Code Example</h2>
-<p>With default provided regular expression <code>^([A-HJ-Z][a-zA-Z0-9]+|I[a-z0-9][a-zA-Z0-9]*|[A-Z][a-zA-Z0-9]+Extensions)$</code>:</p>
 <pre>
 class my_class {...}
+class SOMEName42 {...}
 </pre>
 
 <h2>Compliant Solution</h2>
 
 <pre>
 class MyClass {...}
+class SomeName42 {...}
+</pre>
+
+<h2>Exceptions</h2>
+<p>
+    The rule ignores types that are marked with <code>ComImportAttribute</code> or <code>InterfaceTypeAttribute</code>. Furthermore, the rule
+    allows to have <code>'_'</code> characters in class names inside test projects.
+</p>
+
+<pre>
+class Some_Name___42 {...} // valid in test
+class Some_name___42 {...} // still not valid
+class Some_Name_XC {...} // invalid because of XC, should be Some_Name_Xc
 </pre>]]></description>
     <tag>convention</tag>
-    <param>
-      <key>format</key>
-      <description><![CDATA[Regular expression used to check the class names against.]]></description>
-      <type>STRING</type>
-      <defaultValue>^([A-HJ-Z][a-zA-Z0-9]+|I[a-z0-9][a-zA-Z0-9]*|[A-Z][a-zA-Z0-9]+Extensions)$</defaultValue>
-    </param>
+  </rule>
+  <rule>
+    <key>S3453</key>
+    <name>Classes should not have only "private" constructors</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    A class with only <code>private</code> constructors can't be instantiated, thus, it seems to be pointless code.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+public class MyClass // Noncompliant
+{
+  private MyClass() { ... }
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+public class MyClass
+{
+  public MyClass() { ... }
+}
+</pre>
+
+<h2>Exceptions</h2>
+<p>
+    Classes that themselves access their private constructors (singletons or smart enums) are ignored. Classes with only
+    <code>static</code> members are also ignored because they are covered by Rule S1118.
+</p>]]></description>
+    <tag>design</tag>
   </rule>
   <rule>
     <key>S1694</key>
@@ -1295,56 +1346,6 @@ void CalculateRate(int a, int b)
     <tag>unused</tag>
   </rule>
   <rule>
-    <key>S3253</key>
-    <name>"base()" constructor calls should not be explicitly made</name>
-    <severity>MINOR</severity>
-    <cardinality>SINGLE</cardinality>
-    <description><![CDATA[<p>
-    Since the compiler will automatically invoke the base type's no-argument constructor, there's no need to specify its invocation explicitly. Doing so just clutters the code.
-</p>
-
-<h2>Noncompliant Code Example</h2>
-<pre>
-class X
-{
-  public X()
-  {
-    /* ... */
-  }
-}
-
-class Y : X
-{
-  public Y(int parameter) : base() // Noncompliant
-  {
-    /* does something with the parameter */
-  }
-}
-</pre>
-
-<h2>Compliant Solution</h2>
-<pre>
-class X
-{
-  public X()
-  {
-    /* ... */
-  }
-}
-
-class Y : X
-{
-  public Y(int parameter)
-  {
-    /* does something with the parameter */
-  }
-}
-</pre>
-]]></description>
-    <tag>clumsy</tag>
-    <tag>finding</tag>
-  </rule>
-  <rule>
     <key>S3172</key>
     <name>Delegates should not be subtracted</name>
     <severity>CRITICAL</severity>
@@ -1765,7 +1766,7 @@ public class GarbageDisposal : IDisposable
 There are several reasons for a method not to have a method body:
   <ul>
     <li>It is an unintentional omission, and should be fixed.</li>
-    <li>It is not yet, or never will be, supported. In this case an <code>NotSupportedException</code> should be thrown.</li>
+    <li>It is not yet, or never will be, supported. In this case a <code>NotSupportedException</code> should be thrown.</li>
     <li>The method is an intentionally-blank override. In this case a nested comment should explain the reason for the blank override.</li>
   </ul>
 </p>
@@ -1795,17 +1796,41 @@ public override void doSomethingElse()
 </pre>
 
 <h2>Exceptions</h2>
-<p>An abstract class' may have empty methods, in order to provide default implementations for child classes.</p>
-<pre>
-abstract class Animal
-{
-  public void Speak()
-  {
-  }
-}
-</pre>
+<p>
+    The following methods are ignored:
+    <ul>
+        <li>empty <code>virtual</code> methods,</li>
+        <li>empty methods that override an <code>abstract</code> method,</li>
+        <li>empty overrides in test assemblies.</li>
+    </ul>
+</p>
 ]]></description>
     <tag>suspicious</tag>
+  </rule>
+  <rule>
+    <key>S3261</key>
+    <name>Namespaces should not be empty</name>
+    <severity>INFO</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Namespaces with no lines of code clutter a project and should be removed.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+namespace MyEmptyNamespace // Noncompliant
+{
+
+}
+</pre>
+
+<h2>See</h2>
+<ul>
+    <li><a href="https://www.securecoding.cert.org/confluence/x/OYIyAQ">CERT, MSC07-CPP.</a> - Detect and remove dead code</li>
+</ul>
+]]></description>
+    <tag>cert</tag>
+    <tag>unused</tag>
   </rule>
   <rule>
     <key>S108</key>
@@ -2087,6 +2112,47 @@ public bool IsOdd(uint x)
     <tag>suspicious</tag>
   </rule>
   <rule>
+    <key>S3445</key>
+    <name>Exceptions should not be explicitly rethrown</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    When rethrowing an exception, you should do it by simply calling <code>throw;</code> and not <code>throw exc;</code>,
+    because the stack trace is reset with the second syntax, making debugging a lot harder.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+try
+{}
+catch(ExceptionType1 exc)
+{
+  Console.WriteLine(exc);
+  throw exc; // Noncompliant; stacktrace is reset
+}
+catch (ExceptionType2 exc)
+{
+  throw new Exception("My custom message", exc);  // Compliant; stack trace preserved
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+try
+{}
+catch(ExceptionType1 exc)
+{
+  Console.WriteLine(exc);
+  throw;
+}
+catch (ExceptionType2 exc)
+{
+  throw new Exception("My custom message", exc);
+}
+</pre>]]></description>
+    <tag>confusing</tag>
+  </rule>
+  <rule>
     <key>S1067</key>
     <name>Expressions should not be too complex</name>
     <severity>MAJOR</severity>
@@ -2114,41 +2180,6 @@ if ( (myFirstCondition() || mySecondCondition()) && myLastCondition()) { ... }
       <type>INTEGER</type>
       <defaultValue>3</defaultValue>
     </param>
-  </rule>
-  <rule>
-    <key>S3052</key>
-    <name>Fields should not be initialized to default values</name>
-    <severity>MINOR</severity>
-    <cardinality>SINGLE</cardinality>
-    <description><![CDATA[<p>
-    The compiler automatically initializes class fields to their default values before setting them with any initialization
-    values, so there is no need to explicitly set a field to its default value. Further, under the logic that cleaner code
-    is better code, it's considered poor style to do so.
-</p>
-
-<h2>Noncompliant Code Example</h2>
-<pre>
-class X
-{
-  public int field = 0; // Noncompliant
-  public object o = null; // Noncompliant
-}
-</pre>
-
-<h2>Compliant Solution</h2>
-<pre>
-class X
-{
-  public int field;
-  public object o;
-}
-</pre>
-
-<h2>Exceptions</h2>
-<code>const</code> fields are ignored.
-]]></description>
-    <tag>convention</tag>
-    <tag>finding</tag>
   </rule>
   <rule>
     <key>S2387</key>
@@ -2425,7 +2456,7 @@ class MyTest
 {
   public void Test()
   {
-    var fruitBasket = new List<Fruit>();
+    var fruitBasket = new List&lt;Fruit&gt;();
     fruitBasket.Add(new Orange());
     fruitBasket.Add(new Orange());
     // fruitBasket.Add(new Apple());  // uncommenting this line will make both foreach below throw an InvalidCastException
@@ -2446,7 +2477,7 @@ class MyTest
 
 <h2>Compliant Solution</h2>
 <pre>
-var fruitBasket = new List<Orange>();
+var fruitBasket = new List&lt;Orange&gt;();
 fruitBasket.Add(new Orange());
 fruitBasket.Add(new Orange());
 // fruitBasket.Add(new Apple());  // uncommenting this line won't compile
@@ -2458,12 +2489,12 @@ foreach (Orange orange in fruitBasket)
 </pre>
 or
 <pre>
-var fruitBasket = new List<Fruit>();
+var fruitBasket = new List&lt;Fruit&gt;();
 fruitBasket.Add(new Orange());
 fruitBasket.Add(new Orange());
 fruitBasket.Add(new Apple());
 
-foreach (Orange orange in fruitBasket.OfType<Orange>())
+foreach (Orange orange in fruitBasket.OfType&lt;Orange&gt;())
 {
   ...
 }
@@ -2811,7 +2842,7 @@ private bool IsDefault&lt;T&gt;(T value) where T : class
   <rule>
     <key>S3246</key>
     <name>Generic type parameters should be co/contravariant when possible</name>
-    <severity>MAJOR</severity>
+    <severity>INFO</severity>
     <cardinality>SINGLE</cardinality>
     <description><![CDATA[<p>
     In the interests of making code as usable as possible, interfaces and delegates with generic parameters should use the
@@ -3018,6 +3049,13 @@ public class Person
     to an <code>is</code> call. Simplifying the calls also make <code>null</code> checking unnecessary because both <code>is</code> and
     <code>IsInstanceOfType</code> performs it already.
 </p>
+<p>
+    Finally, utilizing the most concise language constructs for type checking makes the code more readable, so
+    <ul>
+        <li><code>expr as T != null</code> checks should be simplified to <code>expr is T</code>, and</li>
+        <li><code>expr is T</code> should be converted to <code>expr != null</code>, when <code>expr</code> is of type <code>T</code>.</li>
+    </ul>
+</p>
 
 <h2>Noncompliant Code Example</h2>
 <pre>
@@ -3040,6 +3078,14 @@ class Program
     {
       b = appleType.IsAssignableFrom(apple.GetType()); // Noncompliant
     }
+
+    Fruit f = apple;
+    if (f as Apple != null) // Noncompliant
+    {
+    }
+    if (apple is Apple) // Noncompliant
+    {
+    }
   }
 }
 </pre>
@@ -3059,9 +3105,34 @@ class Program
     b = apple is Apple;
     var appleType = typeof(Apple);
     b = appleType.IsInstanceOfType(apple);
+
+    Fruit f = apple;
+    if (f is Apple)
+    {
+    }
+    if (apple != null)
+    {
+    }
   }
 }
-</pre>]]></description>
+</pre>
+
+<h2>Exceptions</h2>
+<p>
+    Calling <code>GetType</code> on an object of <code>Nullable&lt;T&gt;</code> type returns the underlying generic type parameter
+    <code>T</code>, thus a comparison with <code>typeof(Nullable&lt;T&gt;)</code> can't be simplified to use the <code>is</code> operator,
+    which doesn't make difference between <code>T</code> and <code>T?</code>.
+</p>
+<pre>
+int? i = 42;
+bool condition = i.GetType() == typeof(int?); // false;
+condition = i is int?; // true
+</pre>
+
+<p>
+    No issue is reported on <code>expr is T</code> expressions if either operand of the <code>is</code> operator is a value type. 
+    In that case CS0183 or CS0184 reports.
+</p>]]></description>
     <tag>clumsy</tag>
   </rule>
   <rule>
@@ -3712,24 +3783,12 @@ Having to scroll horizontally makes it harder to get a quick overview and unders
 
 <h2>Noncompliant Code Example</h2>
 <pre>
-const uint a = 0u;      // Noncompliant
 const long b = 0l;      // Noncompliant
-const ulong c = 0Ul;     // Noncompliant
-const ulong d = 0uL;     // Noncompliant
-const decimal e = 1.2m;  // Noncompliant
-const float f = 1.2f;    // Noncompliant
-const double g = 1.2d;    // Noncompliant
 </pre>
 
 <h2>Compliant Solution</h2>
 <pre>
-const uint a = 0U;
 const long b = 0L;
-const ulong c = 0UL;
-const ulong d = 0UL;
-const decimal e = 1.2M;
-const float f = 1.2F;
-const double g = 1.2D;
 </pre>
 
 <h2>See</h2>
@@ -3821,6 +3880,44 @@ static void Method(float f) { }
     <tag>cwe</tag>
     <tag>sans-top25-risky</tag>
     <tag>security</tag>
+  </rule>
+  <rule>
+    <key>S3052</key>
+    <name>Members should not be initialized to default values</name>
+    <severity>MINOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    The compiler automatically initializes class fields, auto-properties and events to their default values before setting them with any
+    initialization values, so there is no need to explicitly set a member to its default value. Further, under the logic that cleaner
+    code is better code, it's considered poor style to do so.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+class X
+{
+  public int field = 0; // Noncompliant
+  public object o = null; // Noncompliant
+  public object MyProperty { get; set; } = null; // Noncompliant
+  public event EventHandler MyEvent = null;  // Noncompliant
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+class X
+{
+  public int field;
+  public object o;
+  public object MyProperty { get; set; }
+  public event EventHandler MyEvent;
+}
+</pre>
+
+<h2>Exceptions</h2>
+<code>const</code> fields are ignored.
+]]></description>
+    <tag>finding</tag>
   </rule>
   <rule>
     <key>S1185</key>
@@ -3916,18 +4013,16 @@ class Outer
   </rule>
   <rule>
     <key>S100</key>
-    <name>Method name should comply with a naming convention</name>
+    <name>Methods and properties should be named in camel case</name>
     <severity>MINOR</severity>
     <cardinality>SINGLE</cardinality>
     <description><![CDATA[<p>
-    Shared naming conventions allow teams to collaborate efficiently. This rule checks that all method names match a provided
-    regular expression.
+    Shared naming conventions allow teams to collaborate efficiently. This rule checks whether or not method and property names are camel cased.
+    To reduce noise, two consecutive upper case characters are allowed unless they form the whole name. So, <code>MyXMethod</code> is compliant,
+    but <code>XM</code> on its own is not.
 </p>
 
-<p>The following code:</p>
-
 <h2>Noncompliant Code Example</h2>
-<p>With default provided regular expression <code>^[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$</code>:</p>
 <pre>
 public int doSomething(){...}
 </pre>
@@ -3937,14 +4032,19 @@ public int doSomething(){...}
 <pre>
 public int DoSomething(){...}
 </pre>
+
+<h2>Exceptions</h2>
+<p>
+    The rule ignores members in types that are marked with <code>ComImportAttribute</code> or <code>InterfaceTypeAttribute</code>.
+    <code>extern</code> methods are also excluded from the check. Furthermore, when <code>'_'</code> character is found in a name,
+    the camel casing is not enforced.
+</p>
+<pre>
+void My_method(){...}   // valid
+void My_method_(){...}  // invalid, leading and trailing underscores are reported
+</pre>
 ]]></description>
     <tag>convention</tag>
-    <param>
-      <key>format</key>
-      <description><![CDATA[Regular expression used to check the method names against]]></description>
-      <type>STRING</type>
-      <defaultValue>^[A-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$</defaultValue>
-    </param>
   </rule>
   <rule>
     <key>S3427</key>
@@ -3974,14 +4074,66 @@ myClass.Print(new string[3] {"yes", "no", "maybe"});  // which version of Print 
     <tag>unused</tag>
   </rule>
   <rule>
+    <key>S3600</key>
+    <name>"params" should not be introduced on overrides</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Adding <code>params</code> to a method override has no effect. The compiler accepts it, but the callers won't be able
+    to benefit from the added modifier.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+class Base
+{
+  public virtual void Method(int[] numbers)
+  {
+    ...
+  }
+}
+class Derived : Base
+{
+  public override void Method(params int[] numbers) // Noncompliant, method can't be called with params syntax.
+  {
+    ...
+  }
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+class Base
+{
+  public virtual void Method(int[] numbers)
+  {
+    ...
+  }
+}
+class Derived : Base
+{
+  public override void Method(int[] numbers)
+  {
+    ...
+  }
+}
+</pre>
+]]></description>
+    <tag>confusing</tag>
+  </rule>
+  <rule>
     <key>S1006</key>
-    <name>Method overrides should use the same default parameter values as the base methods</name>
+    <name>Method overrides should not change parameter defaults</name>
     <severity>MAJOR</severity>
     <cardinality>SINGLE</cardinality>
     <description><![CDATA[<p>
     Default arguments are determined by the static type of the object. If a default argument is different for a parameter in an
     overriding method, the value used in the call will be different when calls are made via the base or derived object, which may
     be contrary to developer expectations.
+</p>
+<p>
+    Default parameter values are useless in explicit interface implementations, because the static type of the object will always
+    be the implemented interface. Thus, specifying the default values is useless and confusing.
 </p>
 
 <h2>Noncompliant Code Example</h2>
@@ -4051,6 +4203,7 @@ public class Program
 }
 </pre>
 ]]></description>
+    <tag>cert</tag>
     <tag>misra</tag>
     <tag>pitfall</tag>
   </rule>
@@ -4330,6 +4483,47 @@ var x = Permissions.Read | Permissions.Write;
 </pre>
 ]]></description>
     <tag>convention</tag>
+  </rule>
+  <rule>
+    <key>S3459</key>
+    <name>Unassigned members should be removed</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Fields and auto-properties that are never assigned to hold the default values for their types. They are either pointless code or, more likely,
+    mistakes.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+class MyClass
+{
+  private int field; // Noncompliant, shouldn't it be initialized? This way the value is always default(int), 0.
+  private int Property { get; set; }  // Noncompliant
+  public void Print()
+  {
+    Console.WriteLine(field); //Will always print 0
+    Console.WriteLine(Property); //Will always print 0
+  }
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+class MyClass
+{
+  private int field;
+  private int Property { get; set; } = 42;
+  public void Print()
+  {
+    field++;
+    Console.WriteLine(field);
+    Console.WriteLine(Property);
+  }
+}
+</pre>
+]]></description>
+    <tag>confusing</tag>
   </rule>
   <rule>
     <key>S1848</key>
@@ -4802,6 +4996,42 @@ partial class C
     <tag>suspicious</tag>
   </rule>
   <rule>
+    <key>S1450</key>
+    <name>Private fields only used as local variables in methods should become local variables</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    When the value of a private field is always assigned to in a class' methods before being read, then it is not being used to store class information. Therefore, it should become a local variable in the relevant methods to prevent any misunderstanding.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+public class Foo
+{
+  private int singularField;
+  public void DoSomething(int x)
+  {
+    singularField = x + 5;
+    if (singularField == 0) { /* ... */ }
+  }
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+public class Foo
+{
+  public void DoSomething(int x)
+  {
+    int localVariable = x + 5;
+    if (localVariable == 0) { /* ... */ }
+  }
+}
+</pre>
+]]></description>
+    <tag>pitfall</tag>
+  </rule>
+  <rule>
     <key>S2372</key>
     <name>Exceptions should not be thrown from property getters</name>
     <severity>MAJOR</severity>
@@ -5000,6 +5230,100 @@ public class Program
     <tag>pitfall</tag>
   </rule>
   <rule>
+    <key>S3603</key>
+    <name>Methods with "Pure" attribute should return a value</name>
+    <severity>CRITICAL</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Marking a method with the <code>[Pure]</code> attribute specifies that the method doesn't make any visible changes; thus,
+    the method should return a result, otherwise the call to the method should be equal to no-operation. So <code>[Pure]</code>
+    on a <code>void</code> method is either a mistake, or the method doesn't do any meaningful task.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+class Person
+{
+  private int age;
+  [Pure] // Noncompliant. In this case the method makes a possibly visible state change
+  void ConfigureAge(int age)
+  {
+    ...
+    this.age = age;
+  }
+  ...
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+class Person
+{
+  private int age;
+
+  void ConfigureAge(int age)
+  {
+    ...
+    this.age = age;
+  }
+  ...
+}
+</pre>
+]]></description>
+    <tag>bug</tag>
+  </rule>
+  <rule>
+    <key>S3253</key>
+    <name>Constructor and destructor declarations should not be redundant</name>
+    <severity>MINOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Since the compiler will automatically invoke the base type's no-argument constructor, there's no need to specify its invocation
+    explicitly. Also, when only a single <code>public</code> parameterless constructor is defined in a class, then that constructor
+    can be removed because the compiler would generate it automatically. Similarly, empty <code>static</code> constructors and empty
+    destructors are also wasted keystrokes.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+class X
+{
+  public X() { } // Noncompliant
+  static X() { }  // Noncompliant
+  ~X() { } // Noncompliant
+
+  ...
+}
+
+class Y : X
+{
+  public Y(int parameter) : base() // Noncompliant
+  {
+    /* does something with the parameter */
+  }
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+class X
+{
+  ...
+}
+
+class Y : X
+{
+  public Y(int parameter)
+  {
+    /* does something with the parameter */
+  }
+}
+</pre>
+]]></description>
+    <tag>clumsy</tag>
+    <tag>finding</tag>
+  </rule>
+  <rule>
     <key>S3254</key>
     <name>Default parameter values should not be passed as arguments</name>
     <severity>MINOR</severity>
@@ -5063,6 +5387,29 @@ public IEnumerable&lt;int&gt; ExampleCollection(IEnumerable&lt;int&gt; coll)
 </pre>
 ]]></description>
     <tag>clumsy</tag>
+  </rule>
+  <rule>
+    <key>S3440</key>
+    <name>Variables should not be checked against the values they're about to be assigned</name>
+    <severity>MINOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    There's no point in checking a variable against the value you're about to assign it. Save the cycles and lines of code, and simply perform the assignment.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+if (x != a)  // Noncompliant; why bother?
+{
+  x = a;
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+x = a;
+</pre>]]></description>
+    <tag>confusing</tag>
   </rule>
   <rule>
     <key>S3257</key>
@@ -5178,6 +5525,7 @@ enum MyEnum
         <li><code>sealed</code> on members of <code>sealed</code> classes</li>
         <li><code>unsafe</code> method or block inside construct already marked with <code>unsafe</code>, or when there are no <code>unsafe</code>
         constructs in the block</li>
+        <li><code>checked</code> and <code>unchecked</code> blocks with no integral-type arithmetic operations</li>
     </ul>
 </p>
 
@@ -5217,6 +5565,29 @@ public sealed class MyOtherClass : MyClass
 ]]></description>
     <tag>unused</tag>
     <tag>finding</tag>
+  </rule>
+  <rule>
+    <key>S3610</key>
+    <name>Nullable type comparison should not be redundant</name>
+    <severity>CRITICAL</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Calling <code>GetType()</code> on a nullable object returns the underlying value type. Thus, comparing the returned
+    <code>Type</code> object to <code>typeof(Nullable&lt;SomeType&gt;)</code> doesn't make sense. The comparison either throws an
+    exception or the result can be known at compile time.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+int? nullable = 42;
+bool comparison = nullable.GetType() == typeof(Nullable&lt;int&gt;); // Noncompliant, always false
+comparison = nullable.GetType() != typeof(Nullable&lt;int&gt;); // Noncompliant, always true
+
+nullable = null;
+comparison = nullable.GetType() != typeof(Nullable&lt;int&gt;); // Noncompliant, calling GetType on a null always throws an exception
+</pre>
+]]></description>
+    <tag>bug</tag>
   </rule>
   <rule>
     <key>S3235</key>
@@ -5472,17 +5843,68 @@ public class MyClass
     <tag>bug</tag>
   </rule>
   <rule>
+    <key>S2201</key>
+    <name>Return values should not be ignored when function calls don't have any side effects</name>
+    <severity>CRITICAL</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    When the call to a function doesn't have any side effects, what is the point of making the call if the results are
+    ignored? In such case, either the function call is useless and should be dropped or the source code doesn't behave
+    as expected.
+</p>
+<p>
+    To prevent generating any false-positives, this rule triggers an issues only when the results of the following methods
+    are ignored:
+    <ul>
+        <li>LINQ method,</li>
+        <li><code>[Pure]</code> method,</li>
+        <li>any method on <code>string</code>, <code>int</code>, ...,
+        <code>System.Collections.Immutable.ImmutableArray&lt;T&gt;</code>, <code>ImmutableHashSet&lt;T&gt;</code>, ...</li>
+    </ul>
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+coll.Where(i => i &gt; 5).Select(i => i*i); // Noncompliant
+"this string".Equals("other string"); // Noncompliant
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+var res = coll.Where(i => i &gt; 5).Select(i => i*i); // Noncompliant
+var isEqual = "this string".Equals("other string"); // Noncompliant
+</pre>
+
+<h2>Exceptions</h2>
+<p>
+    This rule doesn't report issues on method calls with <code>out</code> or <code>ref</code> arguments.
+</p>
+
+<h2>See</h2>
+<p>
+    <ul>
+        <li>MISRA C:2012, 17.7 - The value returned by a function having non-void return type shall be used</li>
+        <li><a href="https://www.securecoding.cert.org/confluence/x/9YIRAQ">CERT, EXP12-C.</a> - Do not ignore values returned by functions</li>
+        <li><a href="https://www.securecoding.cert.org/confluence/x/eoAyAQ">CERT, EXP12-CPP.</a> - Do not ignore values returned by functions or methods</li>
+        <li><a href="https://www.securecoding.cert.org/confluence/x/9gEqAQ">CERT, EXP00-J.</a> - Do not ignore values returned by methods</li>
+    </ul>
+</p>]]></description>
+    <tag>bug</tag>
+    <tag>cert</tag>
+    <tag>misra</tag>
+  </rule>
+  <rule>
     <key>S2757</key>
     <name>"=+" should not be used instead of "+="</name>
     <severity>CRITICAL</severity>
     <cardinality>SINGLE</cardinality>
     <description><![CDATA[<p>
-    The use of operators pairs (<code>=+</code> or <code>=-</code>) where the reversed, single operator
-    was meant (<code>+=</code> or <code>-=</code>) will compile and run, but not produce the expected results.
+    The use of operators pairs (<code>=+</code>, <code>=-</code> or <code>=!</code>) where the reversed, single operator
+    was meant (<code>+=</code>, <code>-=</code> or <code>!=</code>) will compile and run, but not produce the expected results.
 </p>
 <p>
-    This rule raises an issue when <code>=+</code>, and <code>=-</code> are used, but ignores the operators
-    when they're spaced out: <code>= +</code>, <code>= -</code>.
+    This rule raises an issue when <code>=+</code>, <code>=-</code> and <code>=!</code> are used, but ignores the operators
+    when they're spaced out: <code>= +</code>, <code>= -</code>, <code>= !</code>.
 </p>
 
 <h2>Noncompliant Code Example</h2>
@@ -6093,6 +6515,52 @@ sealed class MyClass
     <tag>unused</tag>
   </rule>
   <rule>
+    <key>S3458</key>
+    <name>Empty "case" clauses that fall through to the "default" should be omitted</name>
+    <severity>MINOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Empty <code>case</code> clauses that fall through to the <code>default</code> are useless. Whether or not such a <code>case</code>
+    is present, the <code>default</code> clause will be invoked. Such <code>case</code>s simply clutter the code, and should be removed.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+switch(ch)
+{
+  case 'a' :
+    handleA();
+    break;
+  case 'b' :
+    handleB();
+    break;
+  case 'c' :  // Noncompliant
+  default:
+    handleTheRest();
+    break;
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+switch(ch)
+{
+  case 'a' :
+    handleA();
+    break;
+  case 'b' :
+    handleB();
+    break;
+  default:
+    handleTheRest();
+    break;
+}
+</pre>
+]]></description>
+    <tag>clumsy</tag>
+    <tag>finding</tag>
+  </rule>
+  <rule>
     <key>S1301</key>
     <name>"switch" statements should have at least 3 "case" clauses</name>
     <severity>MINOR</severity>
@@ -6441,6 +6909,11 @@ public class Foo
     <description><![CDATA[<p>
   When <code>switch</code> statements have a large set of <code>case</code> clauses, it is usually an attempt to map two sets of data. A real map structure would be more readable and maintainable, and should be used instead.
 </p>
+
+<h2>Exceptions</h2>
+<p>
+    No issue is reported on <code>switch</code> statements that work on <code>enum</code>s.
+</p>
 ]]></description>
     <tag>brain-overload</tag>
     <param>
@@ -6595,6 +7068,36 @@ var v4 = ~v2;
     <tag>bug</tag>
   </rule>
   <rule>
+    <key>S3264</key>
+    <name>Events should be invoked</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Events that are not invoked anywhere are dead code, and there's no good reason to keep them in the source.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+class UninvokedEventSample
+{
+    private event Action&lt;object, EventArgs&gt; Happened; //Noncompliant
+    public void RegisterEventHandler(Action&lt;object, EventArgs&gt; handler)
+    {
+        Happened += handler; //we register some event handlers
+    }
+    public void RaiseEvent()
+    {
+        if (Happened != null)
+        {
+            // Happened(this, null); // the event is never triggered, because this line is commented out.
+        }
+    }
+}
+</pre>
+]]></description>
+    <tag>unused</tag>
+  </rule>
+  <rule>
     <key>S1144</key>
     <name>Unused private types or members should be removed</name>
     <severity>MAJOR</severity>
@@ -6637,6 +7140,25 @@ public class Foo
 <p>
     This rule doesn't raise any issue on empty constructors and attributed members.
 </p>]]></description>
+    <tag>unused</tag>
+  </rule>
+  <rule>
+    <key>S3241</key>
+    <name>Methods should not return values that are never used</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    Private methods are clearly intended for use only within their own scope. When such methods return values that are never used by any of their callers, then
+    clearly there is no need to actually make the return, and it should be removed in the interests of efficiency and clarity.
+</p>
+
+<h2>See</h2>
+<ul>
+    <li><a href="https://www.securecoding.cert.org/confluence/x/SIIyAQ">CERT, MSC12-CPP.</a> - Detect and remove code that has no effect</li>
+</ul>
+]]></description>
+    <tag>cert</tag>
+    <tag>design</tag>
     <tag>unused</tag>
   </rule>
   <rule>
@@ -6764,9 +7286,8 @@ public int pickNumber()
     <severity>MAJOR</severity>
     <cardinality>SINGLE</cardinality>
     <description><![CDATA[<p>
-    Shadowing fields with a local variable or with a method parameter is a bad practice that
-    reduces code readability: It makes it confusing to know whether the field or the variable
-    is being used.
+    Shadowing fields with a local variable is a bad practice that reduces code readability: It makes it confusing to know whether the
+    field or the variable is being used.
 </p>
 
 <h2>Noncompliant Code Example</h2>
@@ -6775,41 +7296,18 @@ class Foo
 {
   public int myField;
 
-  public void doSomething()
+  public void DoSomething()
   {
-    int myField = 0;
-    ...
-  }
-
-  public void doSomethingElse(int myField)
-  {
+    int myField = 0;  // Noncompliant
     ...
   }
 }
 </pre>
 
-<h2>Exceptions</h2>
-<p>
-    Constructors are exceptions; it is common practice to name arguments for the fields the
-    values will be assigned to. Static methods are also excepted.
-</p>
-
-<pre>
-class Foo {
-  public int myField;
-
-  public Foo(int myField)
-  {
-    this.myField = myField;
-  }
-
-  public static Foo build(int myField)
-  {
-    ...
-  }
-}
-</pre>
-]]></description>
+<h2>See</h2>
+<ul>
+    <li><a href="https://www.securecoding.cert.org/confluence/x/2ADEAw">CERT, DCL51-J.</a> - Do not shadow or obscure identifiers in subscopes</li>
+</ul>]]></description>
     <tag>pitfall</tag>
   </rule>
   <rule>
@@ -6934,6 +7432,74 @@ class Program
     });
     r2.Refuel();
   }
+}
+</pre>
+]]></description>
+    <tag>bug</tag>
+  </rule>
+  <rule>
+    <key>S3597</key>
+    <name>"ServiceContract" and "OperationContract" attributes should be used together</name>
+    <severity>MAJOR</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    The <code>ServiceContract</code> attribute specifies that a class or interface defines the communication contract of a Windows Communication Foundation
+    (WCF) service. The service operations of this class or interface are defined by <code>OperationContract</code> attributes added to methods. It doesn't
+    make sense to define a contract without any service operations; thus, in a <code>ServiceContract</code> class or interface at least one method should be
+    annotated with <code>OperationContract</code>. Similarly, WCF only serves <code>OperationContract</code> methods that are defined inside
+    <code>ServiceContract</code> classes or interfaces; thus, this rule also checks that <code>ServiceContract</code> is added to the containing type of
+    <code>OperationContract</code> methods.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+[ServiceContract]
+interface IMyService // Noncompliant
+{
+  int MyServiceMethod();
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+[ServiceContract]
+interface IMyService
+{
+  [OperationContract]
+  int MyServiceMethod();
+}
+</pre>
+]]></description>
+    <tag>suspicious</tag>
+  </rule>
+  <rule>
+    <key>S3598</key>
+    <name>One-way "OperationContract" methods should have "void" return type</name>
+    <severity>CRITICAL</severity>
+    <cardinality>SINGLE</cardinality>
+    <description><![CDATA[<p>
+    When declaring a Windows Communication Foundation (WCF) <code>OperationContract</code> method one-way, that service method won't return any result, not
+    even an underlying empty confirmation message. These are fire-and-forget methods that are useful in event-like communication. Specifying a return type
+    therefore does not make sense.
+</p>
+
+<h2>Noncompliant Code Example</h2>
+<pre>
+[ServiceContract]
+interface IMyService
+{
+  [OperationContract(IsOneWay = true)]
+  int SomethingHappened(int parameter); // Noncompliant
+}
+</pre>
+
+<h2>Compliant Solution</h2>
+<pre>
+[ServiceContract]
+interface IMyService
+{
+  [OperationContract(IsOneWay = true)]
+  void SomethingHappened(int parameter);
 }
 </pre>
 ]]></description>
